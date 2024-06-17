@@ -26,8 +26,12 @@ export default function Home () {
  
   return (
     <main className="">
-      
-        <Filters></Filters>
+
+        <header className="text-white text-center text-3xl">Filters</header>
+        <div className="flex flex-wrap h-fit py-5 px-5 justify-center items-center gap-2 ">
+          <Filters></Filters>
+        </div>
+        
       
       
       <div className="flex justify-center flex-wrap align-center gap-10 py-10">
