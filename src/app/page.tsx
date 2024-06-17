@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GetData } from "./utils/api-data";
 import { Geostar } from "next/font/google";
 import { SkinCard } from "./ui/card-outlines/skinCard";
+import { Filters } from "./ui/filters/filters";
 
 
 
@@ -25,7 +26,11 @@ export default function Home () {
  
   return (
     <main className="">
-      <div className="flex justify-center flex-wrap align-center gap-10 py-10 border-2">
+      
+        <Filters></Filters>
+      
+      
+      <div className="flex justify-center flex-wrap align-center gap-10 py-10">
       <GetData></GetData>
       </div>
         

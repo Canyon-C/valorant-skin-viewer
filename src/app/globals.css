@@ -61,3 +61,12 @@
 .background {
   background: linear-gradient(to right, #d7d2cc 0%, #304352 100%);
 }
+
+.backgroundAccent {
+  --tw-bg-opacity: 1;
+  background: #ffffff1a;
+}
+
+.textAccent {
+  color: #eff2f699;
+}

@@ -36,6 +36,7 @@ type Skins = {
 export const GetData = () => {
     const [data, setData] = useState<Skins[]>([]);
 
+
     useEffect(() => {
         const getData = async () => {
             
@@ -44,9 +45,9 @@ export const GetData = () => {
             const skinsData: Skins[] = response.data.data;
             setData(skinsData);
         }   
-
         getData();
-    }, [])   
+    }, [])
+    
     // console.log(data);
     if (data.length > 0) {
         return(
@@ -56,11 +57,11 @@ export const GetData = () => {
 
                     skin.chromas.map((chroma, index) => {
                         return(
-                            <div key={skin.uuid} className="w-86 h-full flex justify-center items-center">
+                            <div key={skin.uuid} className="w-86 h-full flex justify-center items-center ">
                                  <SkinCard>
-                                    <div className="flex flex-col justify-center items-center gap-16">
+                                    <div className="flex flex-col justify-center items-center gap-16 ">
                                         <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
-                                        <img className="object-contain w-full h-3/5 border-2" src={`${chroma.fullRender}`} alt={`${skin.displayName}`}/>
+                                        <img className="object-contain w-full h-3/5" src={`${chroma.fullRender}`} alt={`${skin.displayName}`}/>
                                 
                                     </div>
                                 </SkinCard>
