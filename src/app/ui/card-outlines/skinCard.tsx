@@ -1,4 +1,5 @@
-import * as React from "react"
+'use client';
+// import * as React from "react"
 import { BackgroundGradient } from "../background-gradient";
 
 
@@ -11,13 +12,9 @@ type SkinCardProps = {
 
 export const SkinCard: React.FC<SkinCardProps> = (
     {   children,
-        
-        
-
+      
     } : {
         children: React.ReactNode;
-        
-        
     }
 ) => {
   return (
