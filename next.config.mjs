@@ -1,16 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    images: {
-        remotePatterns: [
-          {
-            protocol: 'https',
-            hostname: 'media.valorant-api.com',
-            port: '',
-            pathname: '/weaponskins/**',
-          },
-        ],
-      },
-};
+const NextConfig = {
+  images: {
+    domains: ['media.valorant-api.com']
+  },
+}
 
 
-export default nextConfig;
+export default NextConfig;

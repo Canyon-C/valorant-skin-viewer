@@ -1,11 +1,8 @@
 
 import Image from "next/image";
-// import { useEffect, useState } from "react";
 import { ApiData } from "./utils/api-data-class";
 import { Geostar } from "next/font/google";
-// import { SkinCard } from "./ui/card-outlines/skinCard";
 import { Filters } from "./ui/filters/filters";
-
 
 
 
@@ -13,8 +10,6 @@ import { Filters } from "./ui/filters/filters";
 
 export default function Home () {
   const apiData: ApiData = new ApiData();
-
- 
   return (
     <main className="">
 
