@@ -22,10 +22,14 @@ export default function Home () {
       
       <div className="flex justify-center flex-wrap align-center gap-10 py-10">
         {/* <GetData></GetData> */}
+        
         {apiData.getSkins()}
      
       </div>
-        
+      <div>
+      {apiData.getSkins()}
+      </div>
+      
       
       
     </main>

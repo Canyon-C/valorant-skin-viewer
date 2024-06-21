@@ -4,6 +4,7 @@ import { SkinCard } from '../ui/card-outlines/skinCard';
 // import { Filters } from '../ui/filters/filters';
 import Image from 'next/image';
 import { inherits } from 'util';
+import { PopcornIcon } from 'lucide-react';
 
 type RawSkinData = {
     uuid: string;
@@ -227,6 +228,7 @@ export class ApiData {
 
    data: Skin[] = [];
    appliedFilters: FilterName[] = [];
+   rawData: Skin[] = [];
 
    constructor() {
     
@@ -236,7 +238,25 @@ export class ApiData {
         const axios = require('axios');
         const response = await axios.get('https://valorant-api.com/v1/weapons/skins');
         const skinsData: RawSkinData[] = response.data.data;
-        this.data = skinsData.map((skin, _) => (new Skin(skin)));
+        this.rawData = skinsData.map((skin, _) => (new Skin(skin)));
+    }
+
+    async populateData() {
+        if (this.data.length !== 0) {
+            for (var i = 0; i < 12; i++) {
+                this.data.shift()
+                console.log(this.data.length);
+            }
+           
+        }
+        for (var i = 0; i < 12; i++) {
+            this.data.push(this.rawData[i])
+            this.rawData.shift();
+        }
+
+        
+        // console.log(this.data);
+        // console.log(this.data.slice(0, 13));
     }
         
      
@@ -244,7 +264,10 @@ export class ApiData {
     async getSkins() {
         if (this.data.length === 0) {
             await this.getData();
+            
+            
         }
+        this.populateData();
         return(
             // className="w-full h-auto max-w-full"
             this.data.map((skin, index) => {
