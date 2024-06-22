@@ -1,6 +1,6 @@
 
 import Image from "next/image";
-import { ApiData } from "./utils/api-data-class";
+import { ApiData, RenderData } from "./utils/api-data-class";
 import { Geostar } from "next/font/google";
 import { Filters } from "./ui/filters/filters";
 
@@ -8,8 +8,15 @@ import { Filters } from "./ui/filters/filters";
 
 
 
-export default function Home () {
-  const apiData: ApiData = new ApiData();
+export default async function Home () {
+  const apiData = new ApiData();
+  const render = await apiData.getData();
+  // const intersectionObserver = new IntersectionObserver(entries => {
+  //   if (entries[0].intersectionRatio <= 0) return;
+
+   
+  // });
+  
   return (
     <main className="">
 
@@ -23,15 +30,10 @@ export default function Home () {
       <div className="flex justify-center flex-wrap align-center gap-10 py-10">
         {/* <GetData></GetData> */}
         
-        {apiData.getSkins()}
+        {render.getSkins()}
      
       </div>
-      <div>
-      {apiData.getSkins()}
-      </div>
-      
-      
-      
+
     </main>
   );
 }
