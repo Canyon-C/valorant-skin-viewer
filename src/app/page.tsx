@@ -1,21 +1,17 @@
 
 import Image from "next/image";
-import { ApiData, RenderData } from "./utils/api-data-class";
+import { ApiData } from "./utils/api-data-class";
 import { Geostar } from "next/font/google";
 import { Filters } from "./ui/filters/filters";
-
+import { LazyRender } from "./utils/intersection-observer";
 
 
 
 
 export default async function Home () {
-  const apiData = new ApiData();
-  const render = await apiData.getData();
-  // const intersectionObserver = new IntersectionObserver(entries => {
-  //   if (entries[0].intersectionRatio <= 0) return;
 
-   
-  // });
+
+  
   
   return (
     <main className="">
@@ -30,7 +26,7 @@ export default async function Home () {
       <div className="flex justify-center flex-wrap align-center gap-10 py-10">
         {/* <GetData></GetData> */}
         
-        {render.getSkins()}
+        {<LazyRender></LazyRender>}
      
       </div>
 

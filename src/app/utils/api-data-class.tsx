@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { inherits } from 'util';
 import { PopcornIcon } from 'lucide-react';
 import { LargeNumberLike } from 'crypto';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const MAX_SKINS_VIEW = 12;
 
@@ -181,7 +182,7 @@ enum BundleType {
     Standard = "Standard",
 }
 
-class Skin {
+export class Skin {
     displayName: string;
     fullRender: string;
     uuid: string;
@@ -194,7 +195,8 @@ class Skin {
         this.displayName = data.displayName;
         this.uuid = data.uuid;
 
-        const names = this.displayName.split(/(?=[^ ]*$)/);
+        // const names = this.displayName.split(/(?=[^ ]*$)/);
+        const names = this.displayName.split(' ');
         this.bundle = names[0] as BundleType;
         this.weapon = names[1] as WeaponType;
     }
@@ -225,32 +227,119 @@ enum FilterName {
     Melee = "Melee",
 }
 
+// INFINITE SCROLL VERSION
+
+// export class RenderData {
+//     skinDex: number = 0;
+//     data: Skin[];
+//     elements: any[] = [];
+//     // filters: string[] = [];
+//     constructor(data: Skin[]) {
+//         this.data = data;
+//     }
+
+//     async renderSkins(filters?: string[]) {
+//         // console.log("Rendering Data");
+//         // console.log(filters);
+//         if (filters) {
+//             for (var i = this.skinDex; i < this.skinDex + 1 * (MAX_SKINS_VIEW); i++) {
+//                 if (this.data[i].displayName.includes("Standard") || this.data[i].displayName === "Random Favorite Skin") {
+//                     continue;
+//                 }
+//                 console.log(this.data[i].weapon);
+//                     if (filters.includes(this.data[i].weapon)) {
+//                         this.elements.push( 
+//                             <div key={this.data[i].uuid} className="card w-fit h-full flex justify-center items-center">
+//                                 <SkinCard>
+//                                     <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
+//                                         <header className="text-white text-center w-fit text-xl">{this.data[i].displayName}</header>
+//                                         <Image className="object-contain w-4/5 h-3/5" src={`${this.data[i].fullRender}`} alt={`${this.data[i].displayName}`} width={512} height={128} loading="lazy"/>
+                                    
+//                                     </div>
+//                                 </SkinCard>
+//                             </div>);
+//                     }
+                    
+//             }
+//         } else {
+//             for (var i = this.skinDex; i < this.skinDex + 1 * (MAX_SKINS_VIEW); i++) {
+//                 if (this.data[i].displayName.includes("Standard") || this.data[i].displayName === "Random Favorite Skin") {
+//                     continue;
+//                 }
+                 
+//                     this.elements.push( 
+//                     <div key={this.data[i].uuid} className="card w-fit h-full flex justify-center items-center">
+//                         <SkinCard>
+//                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
+//                                 <header className="text-white text-center w-fit text-xl">{this.data[i].displayName}</header>
+//                                 <Image className="object-contain w-4/5 h-3/5" src={`${this.data[i].fullRender}`} alt={`${this.data[i].displayName}`} width={512} height={128} loading="lazy"/>
+                            
+//                             </div>
+//                         </SkinCard>
+//                     </div>);
+//             }
+//         }
+        
+//         this.skinDex = this.skinDex + MAX_SKINS_VIEW;
+//         return this.elements;
+            
+//     }
+// }
+
 export class RenderData {
     skinDex: number = 0;
     data: Skin[];
+    elements: any[] = [];
+    // filters: string[] = [];
     constructor(data: Skin[]) {
         this.data = data;
     }
 
-    async getSkins() {
-        const elements = [];
-        // this.skinDex = this.skinDex * MAX_SKINS_VIEW;
-        for (var i = 0; i < this.skinDex + 1 * (MAX_SKINS_VIEW); i++) {
-            if (this.data[i].displayName.includes("Standard") || this.data[i].displayName === "Random Favorite Skin") {
-                continue;
+    async renderSkins(filters?: string[]) {
+        // console.log("Rendering Data");
+        // console.log(filters);
+        if (filters?.length !== 0) {
+           this.data.map((skin, index) => {
+            if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
+                return;
             }
-            elements.push( <div key={i} className="w-fit h-full flex justify-center items-center">
-                <SkinCard>
-                    <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-                        <header className="text-white text-center w-fit text-xl">{this.data[i].displayName}</header>
-                        <Image className="object-contain w-4/5 h-3/5" src={`${this.data[i].fullRender}`} alt={`${this.data[i].displayName}`} width={512} height={128} loading="lazy"/>
-                    
-                    </div>
-                </SkinCard>
-            </div>);
-               
+            console.log(skin.weapon);
+                if (filters?.includes(skin.weapon)) {
+                    this.elements.push( 
+                        <div key={skin.uuid} className="card w-fit h-full flex justify-center items-center">
+                            <SkinCard>
+                                <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
+                                    <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
+                                    <Image className="object-contain w-4/5 h-3/5" src={`${skin.fullRender}`} alt={`${skin.displayName}`} width={512} height={128} loading="lazy"/>
+                                
+                                </div>
+                            </SkinCard>
+                        </div>);
+             }
+           }) 
+        } else {
+            this.data.map((skin, index) => {
+                if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
+                    return;
+                }
+                 
+                    this.elements.push( 
+                    <div key={skin.uuid} className="card w-fit h-full flex justify-center items-center">
+                        <SkinCard>
+                            <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
+                                <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
+                                <Image className="object-contain w-4/5 h-3/5" src={`${skin.fullRender}`} alt={`${skin.displayName}`} width={512} height={128} loading="lazy"/>
+                            
+                            </div>
+                        </SkinCard>
+                    </div>);
+            })
+
         }
-        return elements;
+        
+        
+        // this.skinDex = this.skinDex + MAX_SKINS_VIEW;
+        return this.elements;
             
     }
 }
@@ -258,12 +347,16 @@ export class RenderData {
 
 
 export class ApiData {
-
+    fetchCatch: number = 0;
+    
     async getData () {
         const axios = require('axios');
         const response = await axios.get('https://valorant-api.com/v1/weapons/skins');
         const skinsData: RawSkinData[] = response.data.data;
         return new RenderData(skinsData.map((skin, index) => (new Skin(skin))));
+        
+        
+
     }
  }
     
