@@ -10,8 +10,9 @@ import { get } from "http";
 export const LazyRender = () => {
     const [skins, setSkins] = useState<any[]>([]);
     const searchParams = useSearchParams();
-    const [renderClass, setRenderClass] = useState<RenderData>();
+    // const [renderClass, setRenderClass] = useState<RenderData>();
     const [appliedFilters, setAppliedFilters] = useState<string[]>([]);
+    let data = useRef<RenderData>();
     
 
 
@@ -22,9 +23,8 @@ export const LazyRender = () => {
             return tempData;
         }
         const getSkins = async () => {
-            setRenderClass(await getData());
-            
-    
+            data.current = await getData();
+            setAppliedFilters(Array.from(searchParams.values()));
         }
         getData();
         getSkins();
@@ -33,29 +33,24 @@ export const LazyRender = () => {
 
     useEffect(() => {
         const set = async () => {
-            if (renderClass) {
-                setSkins([...(await renderClass.renderSkins(appliedFilters))]);
-            }
             
+            if (data.current)  {
+                setSkins([(await data.current.renderSkins(appliedFilters))]);
+            }
         }
         set();
-    }, [renderClass, appliedFilters])
-
-
-
-    
-
-    // const data = async () => {
-    //     skinData = await getData()
-    //     return skinData;
-    // };
+    }, [appliedFilters])
 
     useEffect(() => {
-        setAppliedFilters(...([Array.from(searchParams.values())]));
+        setSkins([]);
+        setAppliedFilters(Array.from(searchParams.values()));
         
-        
-    }, [searchParams, searchParams.size])
+    }, [searchParams.size,searchParams])
 
+
+
+
+    // Infinite Scroll, on hold.....
     
     // useEffect(() => {
     //     let observer: IntersectionObserver;
@@ -84,22 +79,6 @@ export const LazyRender = () => {
 
         
     // }, [])
-
-
-    
-    
-    
-        // useEffect(() => {
-        //     console.log("Filtering");
-        //     const filtered = (element: Skin, index: number, arr: any) => {
-        //         if (Array.from(searchParams.values()).includes(element.weapon)) {
-        //             return element;
-        //         }
-                 
-        //     }
-        // skins.filter(filtered);
-            
-        // }, [appliedFilters, skins, searchParams])
         return skins;
     
 }

@@ -7,6 +7,7 @@ import { inherits } from 'util';
 import { PopcornIcon } from 'lucide-react';
 import { LargeNumberLike } from 'crypto';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import test from 'node:test';
 
 const MAX_SKINS_VIEW = 12;
 
@@ -289,42 +290,37 @@ enum FilterName {
 export class RenderData {
     skinDex: number = 0;
     data: Skin[];
-    elements: any[] = [];
-    // filters: string[] = [];
+    elements: JSX.Element[] = [];
+    filteredData: Skin[] = [];
+    // searchParams: URLSearchParams;
     constructor(data: Skin[]) {
         this.data = data;
+        // this.searchParams = new URLSearchParams();
     }
 
-    async renderSkins(filters?: string[]) {
-        // console.log("Rendering Data");
-        // console.log(filters);
-        if (filters?.length !== 0) {
-           this.data.map((skin, index) => {
-            if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
-                return;
-            }
-            console.log(skin.weapon);
-                if (filters?.includes(skin.weapon)) {
-                    this.elements.push( 
-                        <div key={skin.uuid} className="card w-fit h-full flex justify-center items-center">
-                            <SkinCard>
-                                <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-                                    <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
-                                    <Image className="object-contain w-4/5 h-3/5" src={`${skin.fullRender}`} alt={`${skin.displayName}`} width={512} height={128} loading="lazy"/>
-                                
-                                </div>
-                            </SkinCard>
-                        </div>);
-             }
-           }) 
-        } else {
-            this.data.map((skin, index) => {
+    async renderSkins(filterProp: string[]) {
+        this.filteredData.splice(0, this.filteredData.length);
+        this.elements.splice(0, this.elements.length);
+            this.data.filter(skin => {
+                if (filterProp.length === 0) {
+                    this.filteredData.push(skin);
+                } else {
+                    for (var i = 0; i < filterProp.length; i++) {
+                        if (skin.weapon == filterProp[i]) {
+                            this.filteredData.push(skin);
+                        }
+                    }
+                }
+                
+            })
+            this.filteredData.map((skin, index) => {
+                
                 if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
                     return;
                 }
-                 
+                    
                     this.elements.push( 
-                    <div key={skin.uuid} className="card w-fit h-full flex justify-center items-center">
+                    <div key={skin.uuid} className={`card w-fit h-full flex justify-center items-center`}>
                         <SkinCard>
                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
                                 <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
@@ -334,9 +330,12 @@ export class RenderData {
                         </SkinCard>
                     </div>);
             })
+            
+            
 
-        }
+
         
+
         
         // this.skinDex = this.skinDex + MAX_SKINS_VIEW;
         return this.elements;

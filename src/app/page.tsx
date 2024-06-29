@@ -10,9 +10,6 @@ import { LazyRender } from "./utils/intersection-observer";
 
 export default async function Home () {
 
-
-  
-  
   return (
     <main className="">
 
