@@ -62,6 +62,10 @@
   background: linear-gradient(to right, #d7d2cc 0%, #304352 100%);
 }
 
+.borderAccent {
+  --tw-bg-opacity: 1;
+  border-color: #ffffff1a;
+}
 .backgroundAccent {
   --tw-bg-opacity: 1;
   background: #ffffff1a;

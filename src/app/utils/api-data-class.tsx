@@ -313,13 +313,14 @@ export class RenderData {
                 }
                 
             })
+
             this.filteredData.map((skin, index) => {
                 
                 if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
                     return;
                 }
-                    
                     this.elements.push( 
+                        
                     <div key={skin.uuid} className={`card w-fit h-full flex justify-center items-center`}>
                         <SkinCard>
                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">

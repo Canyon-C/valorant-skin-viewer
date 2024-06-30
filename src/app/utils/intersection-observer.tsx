@@ -1,11 +1,7 @@
 "use client";
-import Image from "next/image";
 import { ApiData, RenderData, Skin } from "./api-data-class";
-import { Geostar } from "next/font/google";
-import { Filter } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { get } from "http";
 
 export const LazyRender = () => {
     const [skins, setSkins] = useState<any[]>([]);
@@ -13,6 +9,9 @@ export const LazyRender = () => {
     // const [renderClass, setRenderClass] = useState<RenderData>();
     const [appliedFilters, setAppliedFilters] = useState<string[]>([]);
     let data = useRef<RenderData>();
+    let prevURL = '';
+    const FilterEListener = searchParams.getAll("filter");
+    const QueryrEListener = searchParams.getAll("query");
     
 
 
@@ -25,6 +24,7 @@ export const LazyRender = () => {
         const getSkins = async () => {
             data.current = await getData();
             setAppliedFilters(Array.from(searchParams.values()));
+            setSkins([(await data.current.renderSkins(appliedFilters))]);
         }
         getData();
         getSkins();
@@ -33,7 +33,6 @@ export const LazyRender = () => {
 
     useEffect(() => {
         const set = async () => {
-            
             if (data.current)  {
                 setSkins([(await data.current.renderSkins(appliedFilters))]);
             }
@@ -44,8 +43,19 @@ export const LazyRender = () => {
     useEffect(() => {
         setSkins([]);
         setAppliedFilters(Array.from(searchParams.values()));
-        
-    }, [searchParams.size,searchParams])
+
+    }, [FilterEListener.length])
+
+    // Attemted Logic for query filter inside client component
+
+    // useEffect(() => {
+    //     skins.filter((skin) => {
+    //         if (skin.props.id.includes(searchParams.get('query'))) {
+    //             return skin;
+    //         }
+    //     });
+    //     setSkins([skins]);
+    // }, [QueryrEListener.length])
 
 
 
@@ -79,7 +89,16 @@ export const LazyRender = () => {
 
         
     // }, [])
-        return skins;
+
+    
+
+
+
+        return (
+            <div className="flex justify-center flex-wrap align-center gap-10 py-10">  
+                {skins}
+            </div>
+        ); 
     
 }
    

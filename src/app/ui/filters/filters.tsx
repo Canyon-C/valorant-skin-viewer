@@ -44,8 +44,9 @@ export const Filters = () => {
     }
 
     return(
-    
-        filters.map((filter, index) => {
+
+        <div className="flex flex-wrap h-fit py-5 px-5 justify-center items-center gap-2 ">
+            {        filters.map((filter, index) => {
             return(
             <div onClick={() => clickHandle(filter.filterName)} key={index} className={`flex justify-center text-sm items-center w-20 textAccent h-2/6 rounded-full hover:cursor-pointer ${params.has("filter", filter.filterName) ? 'bg-green-600' : 'backgroundAccent'}`}>
                 <p>{filter.filterName}</p>
@@ -55,7 +56,9 @@ export const Filters = () => {
            
             
             
-        })    
+        })   }
+        </div>
+ 
         
     );
 }
