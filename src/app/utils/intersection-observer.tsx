@@ -24,8 +24,8 @@ export const LazyRender = () => {
         }
         const getSkins = async () => {
             data.current = await getData();
-            setAppliedFilters(Array.from(searchParams.values()));
-            setSkins([(await data.current.renderSkins(appliedFilters))]);
+            setAppliedFilters(searchParams.getAll("filter"));
+            setSkins([(await data.current.renderSkins(appliedFilters, realQuery))]);
         }
         getData();
         getSkins();
@@ -33,9 +33,8 @@ export const LazyRender = () => {
 
     useEffect(() => {
         const set = async () => {
-            const query = searchParams.get("query");
             if (data.current)  {
-                setSkins([(await data.current.renderSkins(appliedFilters, query))]);
+                setSkins([(await data.current.renderSkins(appliedFilters, realQuery))]);
             }
         }
         set();
@@ -43,16 +42,15 @@ export const LazyRender = () => {
 
     useEffect(() => {
         setSkins([]);
-        setAppliedFilters(Array.from(searchParams.values()));
+        setAppliedFilters(searchParams.getAll("filter"));
         
     }, [FilterEListener.length])
 
     useEffect(() => {
-        console.log(realQuery.length);
         const set = async () => {
             if (data.current)  {
                 setSkins([]);
-                setAppliedFilters(Array.from(searchParams.values()));
+                setAppliedFilters(searchParams.getAll("filter"));
                 
             }
         }

@@ -8,6 +8,7 @@ import { PopcornIcon } from 'lucide-react';
 import { LargeNumberLike } from 'crypto';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import test from 'node:test';
+import { runInThisContext } from 'vm';
 
 const MAX_SKINS_VIEW = 12;
 
@@ -300,15 +301,22 @@ export class RenderData {
         this.filteredData.splice(0, this.filteredData.length);
         this.elements.splice(0, this.elements.length);
 
-            if (searchQuery !== '' && searchQuery) {
+            if ((searchQuery !== '' && searchQuery)) {
                 this.data.filter(skin => {
-                    if (skin.weapon) {
-                        if ((skin.weapon).includes(searchQuery) || skin.bundle.includes(searchQuery)) {
+                    if (skin.weapon && searchQuery) {
+                        if ((skin.weapon.toLowerCase()).includes(searchQuery.toLocaleLowerCase()) || skin.bundle.toLowerCase().includes(searchQuery.toLowerCase())) {
                             this.filteredData.push(skin);
                         }
                     }
-                    
                 })
+
+                if (filterProp.length !== 0) {
+                    this.filteredData = this.filteredData.filter(skin => 
+                        filterProp.some(filter => skin.weapon.toLowerCase() === filter.toLowerCase())
+                    );
+                }
+                
+                
             } else {
                 this.data.filter(skin => {
                     if (filterProp.length === 0) {
@@ -319,13 +327,16 @@ export class RenderData {
                                 this.filteredData.push(skin);
                             }
                         }
+                        // if (filterProp.some(filter => skin.weapon.toLowerCase() === filter.toLowerCase())) {
+                        //     this.filteredData.push(skin);
+                        // }
                     }
                     
                 })
             }
             
 
-            this.filteredData.map((skin, index) => {
+            this.filteredData.map((skin, i) => {
                 
                 if (skin.displayName.includes("Standard") || skin.displayName === "Random Favorite Skin") {
                     return;
