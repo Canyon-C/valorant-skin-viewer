@@ -11,7 +11,10 @@ export const LazyRender = () => {
     let data = useRef<RenderData>();
     let prevURL = '';
     const FilterEListener = searchParams.getAll("filter");
-    const QueryrEListener = searchParams.getAll("query");
+    // const QueryEListener = searchParams.get("query");
+    let query = useRef<string | null>();
+    const queryEListener = searchParams.getAll("query");
+
     
 
 
@@ -33,8 +36,9 @@ export const LazyRender = () => {
 
     useEffect(() => {
         const set = async () => {
+            const query = searchParams.get("query");
             if (data.current)  {
-                setSkins([(await data.current.renderSkins(appliedFilters))]);
+                setSkins([(await data.current.renderSkins(appliedFilters, query))]);
             }
         }
         set();
@@ -43,19 +47,27 @@ export const LazyRender = () => {
     useEffect(() => {
         setSkins([]);
         setAppliedFilters(Array.from(searchParams.values()));
-
+        
     }, [FilterEListener.length])
 
     // Attemted Logic for query filter inside client component
+    useEffect(() => {
 
-    // useEffect(() => {
-    //     skins.filter((skin) => {
-    //         if (skin.props.id.includes(searchParams.get('query'))) {
-    //             return skin;
-    //         }
-    //     });
-    //     setSkins([skins]);
-    // }, [QueryrEListener.length])
+    }, [query.current.length])
+
+
+    useEffect(() => {
+        const set = async () => {
+            query.current = searchParams.get('query');
+            if (data.current)  {
+                setSkins([]);
+                setAppliedFilters(Array.from(searchParams.values()));
+                
+            }
+        }
+        set();
+    }, [queryEListener.length])
+
 
 
 

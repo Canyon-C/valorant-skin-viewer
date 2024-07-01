@@ -292,27 +292,38 @@ export class RenderData {
     data: Skin[];
     elements: JSX.Element[] = [];
     filteredData: Skin[] = [];
-    // searchParams: URLSearchParams;
     constructor(data: Skin[]) {
         this.data = data;
-        // this.searchParams = new URLSearchParams();
     }
 
-    async renderSkins(filterProp: string[]) {
+    async renderSkins(filterProp: string[], searchQuery?: string | null) {
         this.filteredData.splice(0, this.filteredData.length);
         this.elements.splice(0, this.elements.length);
-            this.data.filter(skin => {
-                if (filterProp.length === 0) {
-                    this.filteredData.push(skin);
-                } else {
-                    for (var i = 0; i < filterProp.length; i++) {
-                        if (skin.weapon == filterProp[i]) {
+
+            if (searchQuery !== '' && searchQuery) {
+                this.data.filter(skin => {
+                    if (skin.weapon) {
+                        if ((skin.weapon).includes(searchQuery) || skin.bundle.includes(searchQuery)) {
                             this.filteredData.push(skin);
                         }
                     }
-                }
-                
-            })
+                    
+                })
+            } else {
+                this.data.filter(skin => {
+                    if (filterProp.length === 0) {
+                        this.filteredData.push(skin);
+                    } else {
+                        for (var i = 0; i < filterProp.length; i++) {
+                            if (skin.weapon == filterProp[i]) {
+                                this.filteredData.push(skin);
+                            }
+                        }
+                    }
+                    
+                })
+            }
+            
 
             this.filteredData.map((skin, index) => {
                 
