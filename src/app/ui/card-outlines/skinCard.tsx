@@ -19,12 +19,12 @@ export const SkinCard: React.FC<SkinCardProps> = (
 ) => {
   return (
       <div className="w-80 h-72 sm:w-96 rounded-3xl bg-gray-900 py-5">
-      
+
       {children}
     
-    
+      
   </div>
-    // {/* </BackgroundGradient>  */}
+    
     
   )
 }

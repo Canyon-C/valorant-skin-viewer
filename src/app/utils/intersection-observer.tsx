@@ -6,16 +6,14 @@ import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 export const LazyRender = () => {
     const [skins, setSkins] = useState<any[]>([]);
     const searchParams = useSearchParams();
-    // const [renderClass, setRenderClass] = useState<RenderData>();
     const [appliedFilters, setAppliedFilters] = useState<string[]>([]);
     let data = useRef<RenderData>();
-    let prevURL = '';
     const FilterEListener = searchParams.getAll("filter");
-    // const QueryEListener = searchParams.get("query");
-    let query = useRef<string | null>();
-    const queryEListener = searchParams.getAll("query");
-
-    
+    let query = searchParams.get('query');
+    let realQuery= '';
+    if (query) {
+        realQuery = query;
+    }
 
 
     useEffect(() => {
@@ -33,7 +31,6 @@ export const LazyRender = () => {
         getSkins();
     }, [])
 
-
     useEffect(() => {
         const set = async () => {
             const query = searchParams.get("query");
@@ -50,15 +47,9 @@ export const LazyRender = () => {
         
     }, [FilterEListener.length])
 
-    // Attemted Logic for query filter inside client component
     useEffect(() => {
-
-    }, [query.current.length])
-
-
-    useEffect(() => {
+        console.log(realQuery.length);
         const set = async () => {
-            query.current = searchParams.get('query');
             if (data.current)  {
                 setSkins([]);
                 setAppliedFilters(Array.from(searchParams.values()));
@@ -66,7 +57,7 @@ export const LazyRender = () => {
             }
         }
         set();
-    }, [queryEListener.length])
+    }, [realQuery.length])
 
 
 
