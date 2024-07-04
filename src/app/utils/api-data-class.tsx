@@ -1,18 +1,11 @@
-
-import { Dispatch, SetStateAction } from 'react';
 import { SkinCard } from '../ui/card-outlines/skinCard';
-// import { Filters } from '../ui/filters/filters';
 import Image from 'next/image';
-import { inherits } from 'util';
-import { PopcornIcon } from 'lucide-react';
-import { LargeNumberLike } from 'crypto';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import test from 'node:test';
-import { runInThisContext } from 'vm';
+import Link from 'next/link';
+import { ReactElement } from 'react';
 
 const MAX_SKINS_VIEW = 12;
 
-type RawSkinData = {
+export type RawSkinData = {
     uuid: string;
     displayName: string;
     themeUuid: string;
@@ -39,30 +32,10 @@ type RawSkinData = {
     }>;
 }
 
-type skinFilters = {
-    Odin: string,
-    Vandal: string,
-    Bulldog: string,
-    Guardian: string,
-    Ares: string,
-    Operator: string,
-    Outlaw: string,
-    Marshal: string,
-    Judge: string,
-    Bucky: string,
-    Spectre: string,
-    Stinger: string,
-    Sheriff: string,
-    Ghost: string,
-    Frenzy: string,
-    Shorty: string,
-    Classic: string,
-    Melee: string,
-}
-
 export enum WeaponType {
     Odin = "Odin",
     Vandal = "Vandal",
+    Phantom = "Phantom",
     Bulldog = "Bulldog",
     Guardian = "Guardian",
     Ares = "Ares",
@@ -79,6 +52,15 @@ export enum WeaponType {
     Shorty = "Shorty",
     Classic = "Classic",
     Melee = "Melee",
+    Dagger = "Dagger",
+    Fan = "Fan",
+    Axe = "Axe",
+    Karambit = "Karambit",
+    Claw = "Claw",
+    Knife = "Knife",
+    VCT = "VCT",
+    Champions = "Champions",
+
 }
 
 
@@ -188,6 +170,9 @@ export class Skin {
     displayName: string;
     fullRender: string;
     uuid: string;
+    chromaRenders: string[];
+    chromaVideos: (string | null)[];
+    levelVideos: (string | null)[];
     bundle: BundleType;
     weapon: WeaponType;
     
@@ -196,115 +181,52 @@ export class Skin {
         this.fullRender = data.displayIcon === null ? data.chromas[0].fullRender : data.displayIcon;
         this.displayName = data.displayName;
         this.uuid = data.uuid;
+        this.chromaRenders = data.chromas.map(chroma => {return(chroma.fullRender)})
+        this.chromaVideos = data.chromas.map(chroma => {return(chroma.streamedVideo)})
+        this.levelVideos = data.levels.map(levels => {return(levels.streamedVideo)})
 
         // const names = this.displayName.split(/(?=[^ ]*$)/);
         const names = this.displayName.split(' ');
         this.bundle = names[0] as BundleType;
         this.weapon = names[1] as WeaponType;
     }
-
+    
 
 }
-
-
-
-enum FilterName {
-    Odin = "Odin",
-    Vandal = "Vandal",
-    Bulldog = "Bulldog",
-    Guardian = "Guardian",
-    Ares = "Ares",
-    Operator = "Operator",
-    Outlaw = "Outlaw",
-    Marshal = "Marshal",
-    Judge = "Judge",
-    Bucky = "Bucky",
-    Spectre = "Spectre",
-    Stinger = "Stinger",
-    Sheriff = "Sheriff",
-    Ghost = "Ghost",
-    Frenzy = "Frenzy",
-    Shorty = "Shorty",
-    Classic = "Classic",
-    Melee = "Melee",
-}
-
-// INFINITE SCROLL VERSION
-
-// export class RenderData {
-//     skinDex: number = 0;
-//     data: Skin[];
-//     elements: any[] = [];
-//     // filters: string[] = [];
-//     constructor(data: Skin[]) {
-//         this.data = data;
-//     }
-
-//     async renderSkins(filters?: string[]) {
-//         // console.log("Rendering Data");
-//         // console.log(filters);
-//         if (filters) {
-//             for (var i = this.skinDex; i < this.skinDex + 1 * (MAX_SKINS_VIEW); i++) {
-//                 if (this.data[i].displayName.includes("Standard") || this.data[i].displayName === "Random Favorite Skin") {
-//                     continue;
-//                 }
-//                 console.log(this.data[i].weapon);
-//                     if (filters.includes(this.data[i].weapon)) {
-//                         this.elements.push( 
-//                             <div key={this.data[i].uuid} className="card w-fit h-full flex justify-center items-center">
-//                                 <SkinCard>
-//                                     <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-//                                         <header className="text-white text-center w-fit text-xl">{this.data[i].displayName}</header>
-//                                         <Image className="object-contain w-4/5 h-3/5" src={`${this.data[i].fullRender}`} alt={`${this.data[i].displayName}`} width={512} height={128} loading="lazy"/>
-                                    
-//                                     </div>
-//                                 </SkinCard>
-//                             </div>);
-//                     }
-                    
-//             }
-//         } else {
-//             for (var i = this.skinDex; i < this.skinDex + 1 * (MAX_SKINS_VIEW); i++) {
-//                 if (this.data[i].displayName.includes("Standard") || this.data[i].displayName === "Random Favorite Skin") {
-//                     continue;
-//                 }
-                 
-//                     this.elements.push( 
-//                     <div key={this.data[i].uuid} className="card w-fit h-full flex justify-center items-center">
-//                         <SkinCard>
-//                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-//                                 <header className="text-white text-center w-fit text-xl">{this.data[i].displayName}</header>
-//                                 <Image className="object-contain w-4/5 h-3/5" src={`${this.data[i].fullRender}`} alt={`${this.data[i].displayName}`} width={512} height={128} loading="lazy"/>
-                            
-//                             </div>
-//                         </SkinCard>
-//                     </div>);
-//             }
-//         }
-        
-//         this.skinDex = this.skinDex + MAX_SKINS_VIEW;
-//         return this.elements;
-            
-//     }
-// }
 
 export class RenderData {
-    skinDex: number = 0;
     data: Skin[];
-    elements: JSX.Element[] = [];
+    elements: ReactElement[] = [];
     filteredData: Skin[] = [];
     constructor(data: Skin[]) {
         this.data = data;
     }
 
+    async renderSkinDetails() {
+            this.data.map(skin => {
+                skin.chromaRenders.map(chroma => {
+                    console.log(chroma);
+                    this.elements.push(
+                        <div key={skin.uuid}>
+]                           <Image src={chroma} width={512} height={128} loading="lazy" alt={''}></Image>
+                        </div>
+                    );
+                })  
+                
+            })
+            return this.elements;
+    }
+
     async renderSkins(filterProp: string[], searchQuery?: string | null) {
         this.filteredData.splice(0, this.filteredData.length);
         this.elements.splice(0, this.elements.length);
-
             if ((searchQuery !== '' && searchQuery)) {
+                if (searchQuery.includes("+")) {
+                    searchQuery.replace("+", " ");
+                }
                 this.data.filter(skin => {
                     if (skin.weapon && searchQuery) {
-                        if ((skin.weapon.toLowerCase()).includes(searchQuery.toLocaleLowerCase()) || skin.bundle.toLowerCase().includes(searchQuery.toLowerCase())) {
+                        if ((skin.displayName.toLowerCase()).includes(searchQuery.toLocaleLowerCase()) || skin.bundle.toLowerCase().includes(searchQuery.toLowerCase())) {
                             this.filteredData.push(skin);
                         }
                     }
@@ -312,7 +234,7 @@ export class RenderData {
 
                 if (filterProp.length !== 0) {
                     this.filteredData = this.filteredData.filter(skin => 
-                        filterProp.some(filter => skin.weapon.toLowerCase() === filter.toLowerCase())
+                        filterProp.some(filter => skin.weapon.toLowerCase() === filter.toLowerCase() || skin.bundle.toLowerCase() === filter.toLowerCase())
                     );
                 }
                 
@@ -323,13 +245,10 @@ export class RenderData {
                         this.filteredData.push(skin);
                     } else {
                         for (var i = 0; i < filterProp.length; i++) {
-                            if (skin.weapon == filterProp[i]) {
+                            if (skin.weapon === filterProp[i] || skin.bundle === filterProp[i]) {
                                 this.filteredData.push(skin);
                             }
                         }
-                        // if (filterProp.some(filter => skin.weapon.toLowerCase() === filter.toLowerCase())) {
-                        //     this.filteredData.push(skin);
-                        // }
                     }
                     
                 })
@@ -344,6 +263,7 @@ export class RenderData {
                     this.elements.push( 
                         
                     <div key={skin.uuid} className={`card w-fit h-full flex justify-center items-center`}>
+                        <Link href={`./skin/${skin.displayName.replaceAll(' ', '')}?uuid=${skin.uuid}`}>
                         <SkinCard>
                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
                                 <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>
@@ -351,35 +271,28 @@ export class RenderData {
                             
                             </div>
                         </SkinCard>
+                        </Link>
+                        
                     </div>);
             })
-            
-            
-
-
-        
-
-        
-        // this.skinDex = this.skinDex + MAX_SKINS_VIEW;
-        return this.elements;
-            
+        return this.elements;    
     }
 }
 
 
 
 export class ApiData {
-    fetchCatch: number = 0;
-    
+
     async getData () {
-        const axios = require('axios');
-        const response = await axios.get('https://valorant-api.com/v1/weapons/skins');
-        const skinsData: RawSkinData[] = response.data.data;
+        const response = await fetch('https://valorant-api.com/v1/weapons/skins', {cache: 'force-cache'});
+        const rawData = await response.json();
+        const skinsData: RawSkinData[] = rawData.data;
+
         return new RenderData(skinsData.map((skin, index) => (new Skin(skin))));
         
         
 
     }
- }
+}
     
 

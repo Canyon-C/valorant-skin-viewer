@@ -1,7 +1,7 @@
 "use client";
-import { ApiData, RenderData, Skin } from "./api-data-class";
+import { ApiData, RenderData} from "./api-data-class";
 import { useEffect, useState, useRef } from "react";
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useSearchParams} from 'next/navigation';
 
 export const LazyRender = () => {
     const [skins, setSkins] = useState<any[]>([]);
@@ -25,9 +25,7 @@ export const LazyRender = () => {
         const getSkins = async () => {
             data.current = await getData();
             setAppliedFilters(searchParams.getAll("filter"));
-            setSkins([(await data.current.renderSkins(appliedFilters, realQuery))]);
         }
-        getData();
         getSkins();
     }, [])
 
@@ -58,43 +56,6 @@ export const LazyRender = () => {
     }, [realQuery.length])
 
 
-
-
-
-    // Infinite Scroll, on hold.....
-    
-    // useEffect(() => {
-    //     let observer: IntersectionObserver;
-        
-
-
-    //     const createObserver = () => {
-    //         observer = new IntersectionObserver(async entries => {
-    //             if (entries[0].isIntersecting) {
-    //                 console.log('IntersectingGGG');
-    //                 observer.disconnect();
-    //                 getSkins();
-    //             }
-    //         });
-    //     }
-
-    //     const observeLast = () => {
-    //         const element = document.querySelector(".card:last-child");
-    //         if (element) observer.observe(element);
-            
-    //     }
- 
-    //     createObserver();
-    //     observeLast();
-
-
-        
-    // }, [])
-
-    
-
-
-
         return (
             <div className="flex justify-center flex-wrap align-center gap-10 py-10">  
                 {skins}
@@ -102,4 +63,5 @@ export const LazyRender = () => {
         ); 
     
 }
+ 
    

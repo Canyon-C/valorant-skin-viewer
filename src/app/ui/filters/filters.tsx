@@ -1,7 +1,5 @@
 'use client';
-import React, { MouseEventHandler, ReactNode, useEffect } from 'react';
-import { useState, Component } from 'react';
-import { ApiData } from '@/app/utils/api-data-class';
+import { useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import  { WeaponType }  from '@/app/utils/api-data-class';
 
@@ -9,6 +7,7 @@ export const Filters = () => {
     const [filters, setFilters] = useState<Filter[]>([
         new Filter(WeaponType.Odin),
         new Filter(WeaponType.Vandal),
+        new Filter(WeaponType.Phantom),
         new Filter(WeaponType.Bulldog),
         new Filter(WeaponType.Guardian),
         new Filter(WeaponType.Ares),
@@ -25,6 +24,8 @@ export const Filters = () => {
         new Filter(WeaponType.Shorty),
         new Filter(WeaponType.Classic),
         new Filter(WeaponType.Melee),
+        new Filter(WeaponType.VCT),
+        new Filter(WeaponType.Champions),
     ]);
 
     const searchParams = useSearchParams();
