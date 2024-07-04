@@ -40,3 +40,18 @@ export class SkinApi {
 
     }
 }
+
+export class ApiDataInstance {
+    data: Render = {} as Render;
+    uuid: string;
+
+    constructor(uuid: string) {
+        this.uuid = uuid; 
+    }
+    
+    async storeData() {
+        const apiData = new SkinApi(this.uuid);
+        this.data = await apiData.getData();
+    }
+
+}
