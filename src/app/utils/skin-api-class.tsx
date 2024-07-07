@@ -4,7 +4,9 @@ import Image from 'next/image';
 
 export class Render {
     data: Skin;
-    elements: ReactElement[] = [];
+    skinChromas: ReactElement[] = [];
+    skinChromaVideos: ReactElement[] = [];
+    skinLevelVideos: ReactElement[] = [];
     constructor(data: Skin) {
         this.data = data;
     }
@@ -12,7 +14,7 @@ export class Render {
     renderSkinChromas() {
         this.data.chromaRenders.map((render, index) => {
             
-            {this.elements.push(
+            {this.skinChromas.push(
             <Image key={index} className="object-contain w-full" src={render} width={512} height={128} loading="lazy" alt={''}></Image>
             )}
             
@@ -20,13 +22,13 @@ export class Render {
         
         
     });
-        return this.elements;
+        return this.skinChromas;
     }
 
     renderChromaVideos() {
         this.data.chromaVideos.map((video, index) => {
             if (video !== null) {
-                this.elements.push(
+                this.skinChromaVideos.push(
                     <video key={index} controls>
                         <source src={`${video}`} type="video/mp4" ></source>
                     </video>
@@ -34,22 +36,21 @@ export class Render {
             }
             
         })
-        return(this.elements);
+        return(this.skinChromaVideos);
     }
 
     renderLevelVideos() {
-        console.log(this.data.levelVideos);
         this.data.levelVideos.map((levelVideo, index) => {
             if (levelVideo !== null) {
-                this.elements.push(
-                    <video width="" controls>
+                this.skinLevelVideos.push(
+                    <video key={index} width="" controls>
                         <source src={`${levelVideo}`} type="video/mp4" ></source>
                     </video>
                 );
             }
             
         })
-        return(this.elements);
+        return(this.skinLevelVideos);
     }
             
 
