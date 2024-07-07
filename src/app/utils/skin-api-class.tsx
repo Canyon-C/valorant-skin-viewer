@@ -11,15 +11,52 @@ export class Render {
 
     renderSkinChromas() {
         this.data.chromaRenders.map((render, index) => {
-            this.elements.push(
-                <div key={index}>
-]                   <Image src={render} width={512} height={128} loading="lazy" alt={''}></Image>
-                </div>
-            );
-        })
-
+            
+            {this.elements.push(
+            <Image key={index} className="object-contain w-full" src={render} width={512} height={128} loading="lazy" alt={''}></Image>
+            )}
+            
+            
+        
+        
+    });
         return this.elements;
     }
+
+    renderChromaVideos() {
+        this.data.chromaVideos.map((video, index) => {
+            if (video !== null) {
+                this.elements.push(
+                    <video key={index} controls>
+                        <source src={`${video}`} type="video/mp4" ></source>
+                    </video>
+                );
+            }
+            
+        })
+        return(this.elements);
+    }
+
+    renderLevelVideos() {
+        console.log(this.data.levelVideos);
+        this.data.levelVideos.map((levelVideo, index) => {
+            if (levelVideo !== null) {
+                this.elements.push(
+                    <video width="" controls>
+                        <source src={`${levelVideo}`} type="video/mp4" ></source>
+                    </video>
+                );
+            }
+            
+        })
+        return(this.elements);
+    }
+            
+
+        
+       
+
+        
 }
 
 export class SkinApi {
@@ -43,15 +80,16 @@ export class SkinApi {
 
 export class ApiDataInstance {
     data: Render = {} as Render;
-    uuid: string;
+    apiData: SkinApi;
 
     constructor(uuid: string) {
-        this.uuid = uuid; 
+        this.apiData = new SkinApi(uuid);
+
     }
-    
-    async storeData() {
-        const apiData = new SkinApi(this.uuid);
-        this.data = await apiData.getData();
+
+   async initialize() {
+        this.data = await this.apiData.getData();
     }
+ 
 
 }
