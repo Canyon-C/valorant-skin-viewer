@@ -64,7 +64,10 @@
 
 .borderAccent {
   --tw-bg-opacity: 1;
-  border-color: #ffffff1a;
+  border-color: #ffffff28;
+  /* border-color: #ffffff1a; */
+  /* border-color: #eff2f699; */
+  /* border-color: #ff4655; */
 }
 .backgroundAccent {
   --tw-bg-opacity: 1;
@@ -73,4 +76,34 @@
 
 .textAccent {
   color: #eff2f699;
+}
+
+.heightmoment {
+  height: 30vh;
+}
+
+/* .maxwidth {
+  width: 83.333333%;
+  max-width: 83.333333%;
+} */
+
+/* .SVGContainer {
+  transform: translate(-50%, -50%);
+} */
+
+.navContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media only screen and (min-width: 462px) {
+  .navContainer {
+    justify-content: end;
+    padding-right: 0.75rem;
+    padding-top: 0.75rem;
+  }
+  .mediaquery {
+    justify-content: start;
+  }
 }

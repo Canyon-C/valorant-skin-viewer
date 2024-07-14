@@ -263,7 +263,7 @@ export class RenderData {
                     this.elements.push( 
                         
                     <div key={skin.uuid} className={`card w-fit h-full flex justify-center items-center`}>
-                        <Link href={`./skin/${skin.displayName.replaceAll(' ', '')}?uuid=${skin.uuid}`}>
+                        <Link href={`./${skin.displayName.replaceAll(' ', '').replaceAll('/', '')}?uuid=${skin.uuid}`}>
                         <SkinCard>
                             <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
                                 <header className="text-white text-center w-fit text-xl">{skin.displayName}</header>

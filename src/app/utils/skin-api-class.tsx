@@ -1,5 +1,5 @@
 import { RawSkinData, Skin } from "./api-data-class";
-import { ReactElement } from "react";
+import { ReactElement, createRef } from "react";
 import Image from 'next/image';
 
 export class Render {
@@ -13,25 +13,32 @@ export class Render {
 
     renderSkinChromas() {
         this.data.chromaRenders.map((render, index) => {
-            
             {this.skinChromas.push(
-            <Image key={index} className="object-contain w-full" src={render} width={512} height={128} loading="lazy" alt={''}></Image>
-            )}
-            
+                
+                <div key={index} className="w-full flex justify-center">
+                    <Image className="object-contain w-3/4 md:w-full py-5" src={render} width={512} height={128} loading="lazy" alt={''}></Image>
+                </div>
+
             
         
-        
-    });
+            )} 
+        });
         return this.skinChromas;
     }
 
     renderChromaVideos() {
+
+
         this.data.chromaVideos.map((video, index) => {
             if (video !== null) {
                 this.skinChromaVideos.push(
-                    <video key={index} controls>
+
+                    <video className="displayborder-2 w-full rounded-lg"  key={index} controls>
                         <source src={`${video}`} type="video/mp4" ></source>
                     </video>
+
+                    
+
                 );
             }
             
@@ -43,7 +50,7 @@ export class Render {
         this.data.levelVideos.map((levelVideo, index) => {
             if (levelVideo !== null) {
                 this.skinLevelVideos.push(
-                    <video key={index} width="" controls>
+                    <video key={index} className="w-full h-auto rounded-lg" controls>
                         <source src={`${levelVideo}`} type="video/mp4" ></source>
                     </video>
                 );

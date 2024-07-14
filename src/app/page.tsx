@@ -1,22 +1,17 @@
-
-import Image from "next/image";
-import { ApiData } from "./utils/api-data-class";
-import { Geostar } from "next/font/google";
-import { Filters } from "./ui/filters/filters";
-import { LazyRender } from "./utils/intersection-observer";
-import { Search } from "lucide-react";
-import { Input } from "./ui/search/input";
+'use client';
+import { ValorantSVG } from '@/app/ui/landing/valorant-svg';
 
 
 
+export default function Landing() {
 
-export default async function Home () {
+                {/* <ValorantSVG />
+            <Details /> */}
+    return(
+        <main className="m-0 p-0">
 
-  return (
-    <main className="">
-        <Filters></Filters>
-        <Input placeholder="Search" type="search"></Input>
-        <LazyRender></LazyRender>
-    </main>
-  );
+            <ValorantSVG />
+        </main>
+        
+    );
 }

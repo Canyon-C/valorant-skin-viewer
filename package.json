@@ -9,16 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.7.2",
+    "@tabler/icons-react": "^3.10.0",
+    "@tanstack/react-table": "^8.19.2",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "debounce-callback": "^1.0.0",
-    "framer-motion": "^11.2.10",
+    "framer-motion": "^11.3.2",
+    "lottie-web": "^5.12.2",
     "lucide-react": "^0.395.0",
     "next": "^14.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.3.0",
+    "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.1"
   },

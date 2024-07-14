@@ -13,9 +13,15 @@ export const SkinChromas = () => {
     if (!chromas) return null;
 
     return(
-        <div className="chromaContainer flex max-w-full">
-            {chromas}
-        </div>
+        chromas.map((chroma, index) => {
+            return(
+                <div key={index} className="chromaContainer flex flex-col">
+                {chroma}
+                </div>
+            );
+
+        })
+
         
     );
 }

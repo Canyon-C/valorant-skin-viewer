@@ -19,5 +19,13 @@ export const SkinLevelVideos = () => {
         
     }, [dataInstance])
     if (!levelVideos) return null;
-    return(levelVideos);
+    return (
+        <div className="flex flex-wrap justify-center">
+            {levelVideos.map((level, index) => (
+                <div key={index} className="w-full md:w-1/2 lg:w-2/5 p-2">
+                    {level}
+                </div>
+            ))}
+        </div>
+    );
 }

@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      maxWidth: {
+        '5/6': '53.33rem',
+      },
       colors: {
         cardBack: '#ffffff1a',
         border: "hsl(var(--border))",

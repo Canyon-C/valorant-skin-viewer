@@ -17,7 +17,7 @@ export const SkinCard: React.FC<SkinCardProps> = (
     }
 ) => {
   return (
-      <motion.div className="w-80 h-72 sm:w-96 rounded-3xl border-2 border-gray-600 py-5 hover:cursor-pointer"
+      <motion.div className="w-80 h-72 sm:w-96 rounded-3xl border-2 borderAccent py-5 hover:cursor-pointer"
       whileHover={{
         scale: 1.02,
         transition: {duration: .2},
