@@ -5,7 +5,7 @@ import { LevelIcon } from "./levels-icon";
 import { ChromaIcon } from "./chroma-icon";
 import { Poppins } from "next/font/google";
 
-const poppins = Poppins({weight: ['400', '700'], subsets: ["latin"]})
+const poppins = Poppins({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const BentoGrid = ({
   className,
@@ -49,20 +49,20 @@ export const BentoGridItem = ({
       {header}
       <div className="group-hover/bento:translate-x-2 transition duration-200">
         {icon}
-        <div className={`${poppins.className} font-bold  text-white dark:text-neutral-200 mb-2 mt-2`}>
+        <div
+          className={`${poppins.className} font-bold  text-white dark:text-neutral-200 mb-2 mt-2`}
+        >
           {title}
         </div>
-        <div className={`${poppins.className} font-sans font-normal textAccent text-xs dark:text-neutral-300`}>
+        <div
+          className={`${poppins.className} font-sans font-normal textAccent text-xs dark:text-neutral-300`}
+        >
           {description}
         </div>
       </div>
     </div>
   );
 };
-
-
-
-
 
 export function BentoGridSecondDemo() {
   return (
@@ -84,30 +84,30 @@ const Skeleton = () => (
 );
 const items = [
   {
-    title: 'Search Functionality',
-    description: "Quickly find your desired Valorant skins with our powerful search tool.",
+    title: "Search Functionality",
+    description:
+      "Quickly find your desired Valorant skins with our powerful search tool.",
     header: <SearchAni></SearchAni>,
     className: "md:col-span-2",
   },
   {
     title: "Filter System",
-    description: "Easily narrow down skins by weapon type using our filter system.",
+    description:
+      "Easily narrow down skins by weapon type using our filter system.",
     header: <FilterIcon></FilterIcon>,
     className: "md:col-span-1",
   },
   {
     title: "Skin Animation Levels",
-    description: "Experience the evolution of skins with each dynamic animation level.",
+    description:
+      "Experience the evolution of skins with each dynamic animation level.",
     header: <LevelIcon></LevelIcon>,
     className: "md:col-span-1",
   },
   {
     title: "Skin Chromas",
-    description:
-      "View skins with a variety of vibrant chromas.",
+    description: "View skins with a variety of vibrant chromas.",
     header: <ChromaIcon></ChromaIcon>,
     className: "md:col-span-2",
   },
 ];
-
-

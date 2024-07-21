@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import { ApiData } from "../utils/api-data-class";
 import { Geostar } from "next/font/google";
@@ -8,16 +7,12 @@ import { Search } from "lucide-react";
 import { Input } from "../ui/search/input";
 import { ValorantSVG } from "../ui/landing/valorant-svg";
 
-
-
-
-export default async function Home () {
-
+export default async function Home() {
   return (
     <main className="">
-        <Filters></Filters>
-        <Input placeholder="Search" type="search"></Input>
-        <LazyRender></LazyRender>
+      <Filters></Filters>
+      <Input placeholder="Search" type="search"></Input>
+      <LazyRender></LazyRender>
     </main>
   );
 }

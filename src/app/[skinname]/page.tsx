@@ -6,11 +6,9 @@ import { SkinLevelVideos } from "@/app/ui/skinDetails/skin-level-videos";
 import { DataTable } from "@/app/ui/table/data-table";
 
 export default function skinDetails() {
-    
-    return (
-        <main className="m-0 p-0">
-            <DataTable></DataTable>
-        </main>
-   
-);
+  return (
+    <main className="m-0 p-0">
+      <DataTable></DataTable>
+    </main>
+  );
 }
