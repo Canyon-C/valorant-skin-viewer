@@ -73,7 +73,7 @@ export const DataTable = () => {
   return (
     <DataProvider>
       <div className="skinInfoContainer flex flex-col md:flex-row gap-5 p-5 h-screen items-center">
-        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-1/4 md:h-3/4 min-h-[502px] flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-1/4 md:h-3/4 min-h-[202px] md:min-h-[505px] flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-2 ">Levels</h1>
           </div>
@@ -82,7 +82,7 @@ export const DataTable = () => {
             <LevelHud />
           </div>
         </div>
-        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-3/4 min-h-[502px] md:min-h-[200px] flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-3/4 min-h-[505px] flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-5">Chromas</h1>
           </div>
@@ -90,11 +90,11 @@ export const DataTable = () => {
             <SkinChromas />
           </div>
         </div>
-        <div className="data-table flex justify-start w-full h-3/4 flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-full h-3/4 md:min-h-[505px] flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-5">View</h1>
           </div>
-          <div className="w-full flex flex-col justify-around items-center text-white h-full">
+          <div className="w-full flex flex-col justify-around items-center text-white h-full object-contain">
             <SkinChromaVideos />
             <SkinLevelVideos />
           </div>

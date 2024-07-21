@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useDataContext } from "./dataContext";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 export const SkinChromas = () => {
   const dataInstance = useDataContext();
@@ -45,24 +46,27 @@ export const SkinChromas = () => {
   if (currentLevel === levelLength - 1) {
     return chromas.map((chroma, index) => {
       return (
-        <div
+        <motion.div
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 1 }}
           key={index}
           className="chromaContainer flex flex-col hover:cursor-pointer"
           onClick={() => handleClick(index)}
         >
           {chroma}
-        </div>
+        </motion.div>
       );
     });
   } else {
-    console.log(levelLength);
     return (
-      <div
+      <motion.div
+        whileHover={{ scale: 1.15 }}
+        whileTap={{ scale: 1 }}
         className="chromaContainer flex flex-col hover:cursor-pointer"
         onClick={() => handleClick(0)}
       >
         {chromas[0]}
-      </div>
+      </motion.div>
     );
   }
 };

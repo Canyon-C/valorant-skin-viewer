@@ -2,6 +2,7 @@
 import { useDataContext } from "./dataContext";
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 export const LevelHud = () => {
   const dataInstance = useDataContext();
@@ -28,10 +29,25 @@ export const LevelHud = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
+  // const levelVariants = {
+  //   initial: { backgroundColor: "#000000" },
+  //   hover: { backgroundColor: "#ffffff28" },
+  // };
+
   return (
     <ul className="text-white flex md:flex-col items-center justify-around w-full h-full gap-3 py-5 px-5">
       {UI?.map((level, index) => (
-        <div
+        <motion.div
+          // variants={levelVariants}
+          // initial="initial"
+          whileHover={{
+            backgroundColor: "#ffffff28",
+            transition: { duration: 0.2 },
+          }}
+          whileTap={{
+            backgroundColor: "#000000",
+            transition: { duration: 0.2 },
+          }}
           className="border w-1/2 rounded-full flex justify-center borderAccent hover:cursor-pointer"
           key={index}
           onClick={() => {
@@ -39,7 +55,7 @@ export const LevelHud = () => {
           }}
         >
           {level}
-        </div>
+        </motion.div>
       ))}
     </ul>
   );

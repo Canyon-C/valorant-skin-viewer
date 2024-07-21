@@ -15,9 +15,12 @@ export class Render {
     this.data.chromaRenders.map((render, index) => {
       {
         this.skinChromas.push(
-          <div key={index} className="flex justify-center items-center">
+          <div
+            key={index}
+            className="flex justify-center items-center h-full w-full"
+          >
             <Image
-              className="object-contain w-2/3 md:4/6 h-2/3"
+              className="object-contain w-2/3 md:w-4/5 h-3/5"
               src={render}
               width={512}
               height={128}
