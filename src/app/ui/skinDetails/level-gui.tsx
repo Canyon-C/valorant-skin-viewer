@@ -47,6 +47,7 @@ export const LevelHud = () => {
           whileTap={{
             backgroundColor: "#000000",
             transition: { duration: 0.2 },
+            scale: 0.98,
           }}
           className="border w-1/2 rounded-full flex justify-center borderAccent hover:cursor-pointer"
           key={index}

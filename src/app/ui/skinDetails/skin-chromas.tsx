@@ -47,7 +47,7 @@ export const SkinChromas = () => {
     return chromas.map((chroma, index) => {
       return (
         <motion.div
-          whileHover={{ scale: 1.15 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 1 }}
           key={index}
           className="chromaContainer flex flex-col hover:cursor-pointer"
@@ -60,7 +60,7 @@ export const SkinChromas = () => {
   } else {
     return (
       <motion.div
-        whileHover={{ scale: 1.15 }}
+        whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 1 }}
         className="chromaContainer flex flex-col hover:cursor-pointer"
         onClick={() => handleClick(0)}

@@ -68,11 +68,13 @@ export class Render {
     const levelIndex: JSX.Element[] = [];
 
     this.data.levelVideos.map((level, index) => {
-      levelIndex.push(
-        <button key={index} className="py-1 md:py-3">
-          {index}
-        </button>
-      );
+      if (level !== null) {
+        levelIndex.push(
+          <button key={index} className="py-1 md:py-3">
+            {index + 1}
+          </button>
+        );
+      }
     });
     return levelIndex;
   }

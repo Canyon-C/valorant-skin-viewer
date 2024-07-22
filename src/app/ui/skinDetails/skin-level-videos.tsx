@@ -34,7 +34,7 @@ export const SkinLevelVideos = () => {
   }, [dataInstance]);
   if (levelVideos && levelVideos.length === 0) return <p>No Levels</p>;
   if (currentLevel === levelLength - 1 && currentChroma !== 0) {
-    return <></>;
+    return null;
   } else if (levelVideos) {
     return (
       <div className="flex flex-wrap justify-center">

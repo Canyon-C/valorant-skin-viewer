@@ -17,6 +17,7 @@ export const SkinChromaVideos = () => {
   const [currentChroma, setCurrentChroma] = useState<number>(0);
   const [levelLength, setLevelLength] = useState<number>(0);
   const [chromaLength, setChromaLength] = useState<number>(0);
+  const mewhen = "null";
 
   //   const videoVariants = {
   //     hidden: { height: 0, overflow: "hidden" },
@@ -78,13 +79,20 @@ export const SkinChromaVideos = () => {
   //         </motion.div>
 
   // );
-  if (videos[currentChroma - 1] === undefined && currentChroma !== 0) {
-    return <p>No Chroma</p>;
+  if (
+    videos[currentChroma - 1] === undefined ||
+    videos[currentChroma - 1] === null
+  ) {
+    if (currentChroma !== 0) {
+      return <p>No Chroma</p>;
+    }
   } else {
     if (currentLevel === levelLength - 1) {
       return (
         <div className="flex flex-wrap justify-center">
-          <div className="w-full p-2">{videos[currentChroma - 1]}</div>
+          <div className="w-full p-2 text-white">
+            {videos[currentChroma - 1]}
+          </div>
         </div>
       );
     }
