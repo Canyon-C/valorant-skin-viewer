@@ -7,6 +7,7 @@ export class Render {
   skinChromas: ReactElement[] = [];
   skinChromaVideos: ReactElement[] = [];
   skinLevelVideos: ReactElement[] = [];
+  allChromas: ReactElement[] = [];
   constructor(data: Skin) {
     this.data = data;
   }
@@ -17,10 +18,10 @@ export class Render {
         this.skinChromas.push(
           <div
             key={index}
-            className="flex justify-center items-center h-full w-full"
+            className="object-contain flex justify-center items-center h-28 w-36"
           >
             <Image
-              className="object-contain w-2/3 md:w-4/5 h-3/5"
+              className="object-contain"
               src={render}
               width={512}
               height={128}
@@ -33,13 +34,31 @@ export class Render {
     });
     return this.skinChromas;
   }
+  //h-48 w-72
+  //h-36 w-52
+  renderBaseChroma() {
+    this.allChromas.push(
+      <div className="flex justify-center items-center h-28 w-36">
+        <Image
+          className="object-contain"
+          src={this.data.chromaRenders[0]}
+          width={512}
+          height={128}
+          loading="lazy"
+          alt={""}
+        ></Image>
+      </div>
+    );
+
+    return this.allChromas;
+  }
 
   renderChromaVideos() {
     this.data.chromaVideos.map((video, index) => {
       if (video !== null) {
         this.skinChromaVideos.push(
           <video
-            className="displayborder-2 w-full rounded-lg"
+            className="displayborder-2 rounded-lg object-contain"
             key={index}
             controls
           >
@@ -55,7 +74,11 @@ export class Render {
     this.data.levelVideos.map((levelVideo, index) => {
       if (levelVideo !== null) {
         this.skinLevelVideos.push(
-          <video key={index} className="w-full h-auto rounded-lg" controls>
+          <video
+            key={index}
+            className="w-full h-full rounded-lg object-contain"
+            controls
+          >
             <source src={`${levelVideo}`} type="video/mp4"></source>
           </video>
         );

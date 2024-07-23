@@ -6,6 +6,7 @@ import { SkinLevelVideos } from "../skinDetails/skin-level-videos";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { LevelHud } from "../skinDetails/level-gui";
+import { BaseChroma } from "../skinDetails/base-chromas";
 
 export const DataTable = () => {
   const [skinLevelsClicked, setSkinLevelsClicked] = useState<boolean>(false);
@@ -72,8 +73,16 @@ export const DataTable = () => {
   // );
   return (
     <DataProvider>
-      <div className="skinInfoContainer flex flex-col md:flex-row gap-5 p-5 h-screen items-center">
-        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-1/4 md:h-3/4 min-h-[202px] md:min-h-[505px] flex-col border borderAccent rounded-3xl">
+      <div className="skinInfoContainer flex flex-col gap-5 p-5 h-screen items-center">
+        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] h-fit flex-col border borderAccent rounded-3xl gap-7">
+          <div className="w-full flex justify-around px-5 rounded-md">
+            <h1 className="text-white text-xl py-2 ">Base Chroma</h1>
+          </div>
+          <div className="w-full flex flex-col md:flex-row justify-center items-center text-white h-fit">
+            <BaseChroma />
+          </div>
+        </div>
+        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] h-fit md:h-fit flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-2 ">Levels</h1>
           </div>
@@ -82,19 +91,19 @@ export const DataTable = () => {
             <LevelHud />
           </div>
         </div>
-        <div className="data-table flex justify-start w-3/4 md:w-2/4 h-3/4 min-h-[505px] flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] h-fit flex-col border borderAccent rounded-3xl gap-7">
           <div className="w-full flex justify-around px-5 rounded-md">
-            <h1 className="text-white text-xl py-5">Chromas</h1>
+            <h1 className="text-white text-xl py-2">Chromas</h1>
           </div>
-          <div className="w-full flex flex-col justify-around items-center text-white h-full">
+          <div className="w-full flex flex-col md:flex-row justify-center items-center text-white h-fit gap-10 md:gap-0 lg:gap-10">
             <SkinChromas />
           </div>
         </div>
-        <div className="data-table flex justify-start w-full h-3/4 md:min-h-[505px] flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] h-fit flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-5">View</h1>
           </div>
-          <div className="w-full flex flex-col justify-around items-center text-white h-full object-contain">
+          <div className="w-full flex flex-col justify-around items-center text-white">
             <SkinChromaVideos />
             <SkinLevelVideos />
           </div>
