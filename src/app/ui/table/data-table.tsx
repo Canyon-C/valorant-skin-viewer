@@ -99,7 +99,7 @@ export const DataTable = () => {
             <SkinChromas />
           </div>
         </div>
-        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] h-fit flex-col border borderAccent rounded-3xl">
+        <div className="data-table flex justify-start w-[18rem] sm:w-[40rem] md:w-[45rem] lg:w-[60rem] xl:w-[75rem] flex-col border borderAccent rounded-3xl">
           <div className="w-full flex justify-around px-5 rounded-md">
             <h1 className="text-white text-xl py-5">View</h1>
           </div>

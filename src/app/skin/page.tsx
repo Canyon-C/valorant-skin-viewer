@@ -10,8 +10,15 @@ import { ValorantSVG } from "../ui/landing/valorant-svg";
 export default async function Home() {
   return (
     <main className="">
-      <Filters></Filters>
-      <Input placeholder="Search" type="search"></Input>
+      <div className="py-5">
+        <Input placeholder="Search" type="search"></Input>
+      </div>
+
+      <div className="py-5 w-full flex justify-center items-center">
+        {" "}
+        <Filters></Filters>
+      </div>
+
       <LazyRender></LazyRender>
     </main>
   );

@@ -79,31 +79,11 @@
 }
 
 .heightmoment {
-  height: 30vh;
+  min-height: 30vh;
 }
-
-/* .maxwidth {
-  width: 83.333333%;
-  max-width: 83.333333%;
-} */
-
-/* .SVGContainer {
-  transform: translate(-50%, -50%);
-} */
 
 .navContainer {
   display: flex;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
-}
-
-@media only screen and (min-width: 462px) {
-  .navContainer {
-    justify-content: end;
-    padding-right: 0.75rem;
-    padding-top: 0.75rem;
-  }
-  .mediaquery {
-    justify-content: start;
-  }
 }

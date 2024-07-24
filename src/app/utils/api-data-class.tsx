@@ -52,11 +52,9 @@ export enum WeaponType {
   Shorty = "Shorty",
   Classic = "Classic",
   Melee = "Melee",
-  VCT = "VCT",
-  Champions = "Champions",
 }
 
-enum BundleType {
+export enum BundleType {
   Aemondir = "Aemondir",
   Holomoku = "Holomoku",
   Mystbloom = "Mystbloom",
