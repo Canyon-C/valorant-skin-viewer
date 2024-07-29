@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useAnimate } from "framer-motion";
 import { Header } from "./details";
 import { BentoGridSecondDemo } from "./bento-grid";
@@ -68,7 +68,7 @@ export const ValorantSVG = () => {
       <div className="landingContainer flex flex-col justify-start items-center ">
         <motion.div
           style={{ position: "absolute", top: "0%", left: "0%" }}
-          className={`SVGContainer w-fit py-1`}
+          className={`SVGContainer w-fit py-3 px-5`}
         >
           <div>
             <svg

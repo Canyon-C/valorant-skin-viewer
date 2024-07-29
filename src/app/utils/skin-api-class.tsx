@@ -1,5 +1,5 @@
 import { RawSkinData, Skin } from "./api-data-class";
-import { ReactElement, createRef } from "react";
+import { ReactElement } from "react";
 import Image from "next/image";
 
 export class Render {
@@ -34,8 +34,7 @@ export class Render {
     });
     return this.skinChromas;
   }
-  //h-48 w-72
-  //h-36 w-52
+
   renderBaseChroma() {
     this.allChromas.push(
       <div className="flex justify-center items-center h-28 w-36">

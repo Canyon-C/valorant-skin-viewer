@@ -1,9 +1,7 @@
 "use client";
 import * as React from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { useDebouncedCallback } from "use-debounce";
+import { useSearchParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { useState } from "react";
 
 export interface InputProps
@@ -17,14 +15,12 @@ const LandingInput = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      //   router.push(`/skin?query=${query}`);
       router.push(`/skin?query=${query}`);
     };
     return (
       <form onSubmit={handleSubmit} className="w-full">
         <div className="flex justify-center items-center">
           <input
-            //   onSubmit={(e) => handleSearch(e.target.value)}
             defaultValue={searchParams.get("query")?.toString()}
             value={query}
             onChange={(e) => setQuery(e.target.value)}

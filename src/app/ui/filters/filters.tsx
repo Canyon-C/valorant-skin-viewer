@@ -1,20 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { WeaponType, BundleType } from "@/app/utils/api-data-class";
-import { DropDownMenuFilter } from "./filter-dropdown";
 import { motion } from "framer-motion";
 
 export const Filters = () => {
   const weaponTypeArray = Object.values(WeaponType);
 
   const bundleTypeArray = Object.values(BundleType);
-  const [filters, setFilters] = useState<Filter[]>([]);
+  const filters = useRef<Filter[]>([]);
   const [filterClicked, setFilteredClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    setFilters(weaponTypeArray.map((weaponType) => new Filter(weaponType)));
-    // bundleTypeArray.map((bundleType) => filters.push(new Filter(bundleType)));
+    filters.current = weaponTypeArray.map(
+      (weaponType) => new Filter(weaponType)
+    );
+    // bundleTypeArray.map((bundleType) => filters.push(new Filter(bundleType))); // Bundle Type Implementation / Currently in development
   }, []);
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -27,7 +28,7 @@ export const Filters = () => {
     } else {
       params.append("filter", filter);
     }
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const dropdownVariants = {
@@ -59,7 +60,7 @@ export const Filters = () => {
         className="filter-dropdown w-full"
       >
         <div className="flex flex-wrap h-fit py-5 px-5 justify-center items-center gap-2">
-          {filters.map((filter, index) => {
+          {filters.current.map((filter, index) => {
             return (
               <div
                 onClick={() => clickHandle(filter.filterName)}

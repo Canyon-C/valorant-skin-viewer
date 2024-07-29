@@ -12,11 +12,31 @@ export const LevelHud = () => {
   const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
 
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
+
   useEffect(() => {
     if (dataInstance && dataInstance.data) {
       setUI(dataInstance.data.levelLength());
     }
   }, [dataInstance]);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setScrollPosition(window.scrollY);
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
+
+  // useEffect(() => {
+  //   const scroll = () => {
+  //     console.log(scrollPosition);
+
+  //   };
+  //   scroll();
+  // }, [searchParams.size]);
 
   const handleClick = (level: number) => {
     if (params.has("level")) {
@@ -29,17 +49,10 @@ export const LevelHud = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  // const levelVariants = {
-  //   initial: { backgroundColor: "#000000" },
-  //   hover: { backgroundColor: "#ffffff28" },
-  // };
-
   return (
     <ul className="text-white flex md:flex-col items-center justify-around w-full h-full gap-3 py-5 px-5">
       {UI?.map((level, index) => (
         <motion.div
-          // variants={levelVariants}
-          // initial="initial"
           whileHover={{
             backgroundColor: "#ffffff28",
             transition: { duration: 0.2 },

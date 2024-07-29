@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ReactElement } from "react";
 
-const MAX_SKINS_VIEW = 12;
-
 export type RawSkinData = {
   uuid: string;
   displayName: string;

@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useDataContext } from "./dataContext";
-import { ApiDataInstance } from "@/app/utils/skin-api-class";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export const SkinLevelVideos = () => {
   const dataInstance = useDataContext();
@@ -10,8 +9,6 @@ export const SkinLevelVideos = () => {
   const [currentLevel, setCurrentLevel] = useState<number>(0);
   const [levelLength, setLevelLength] = useState<number>(0);
   const [currentChroma, setCurrentChroma] = useState<number>(0);
-  const pathname = usePathname();
-  const { replace } = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 

@@ -87,3 +87,13 @@
   justify-content: end;
   align-items: center;
 }
+
+.anchor {
+  overflow-anchor: none;
+}
+
+@media (min-width: 1600px) {
+  .mewhen {
+    height: fit-content;
+  }
+}
