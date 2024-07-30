@@ -57,9 +57,14 @@ export class Render {
       if (video !== null) {
         this.skinChromaVideos.push(
           <video
-            className="displayborder-2 rounded-lg object-contain"
+            className="displayborder-2 rounded-lg object-contain volume"
             key={index}
             controls
+            ref={(el) => {
+              if (el) {
+                el.volume = 0.35;
+              }
+            }}
           >
             <source src={`${video}`} type="video/mp4"></source>
           </video>
@@ -77,6 +82,11 @@ export class Render {
             key={index}
             className="w-full h-full rounded-lg object-contain"
             controls
+            ref={(el) => {
+              if (el) {
+                el.volume = 0.35;
+              }
+            }}
           >
             <source src={`${levelVideo}`} type="video/mp4"></source>
           </video>
