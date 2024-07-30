@@ -57,7 +57,7 @@ export enum BundleType {
   Holomoku = "Holomoku",
   Mystbloom = "Mystbloom",
   Switchback = "Switchback",
-  Fortunes_Hand = "Fortunes Hand",
+  Fortunes_Hand = "Fortune's Hand",
   Primordium = "Primordium",
   XERØFANG = "XERØFANG",
   Emberclad = "Emberclad",
@@ -179,9 +179,9 @@ export class Skin {
     });
 
     const names = this.displayName.split(/ (?!.* )/);
-    this.bundle = BundleType[names[0] as BundleType];
+    this.bundle = BundleType[names[0] as keyof typeof BundleType];
     if (this.bundle === undefined) {
-      this.bundle = BundleType["" as BundleType];
+      this.bundle = BundleType["" as keyof typeof BundleType];
     }
 
     this.weapon = WeaponType[names[1] as WeaponType];
