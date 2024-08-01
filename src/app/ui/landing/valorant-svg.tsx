@@ -61,7 +61,11 @@ export const ValorantSVG = () => {
           <Redirect />
         </motion.div>
         <motion.div ref={searchBar} variants={appearVariants} initial="initial">
-          <LandingInput placeholder="Search" type="search" className="mb-10" />
+          <LandingInput
+            placeholder="Search Skins"
+            type="search"
+            className="mb-10"
+          />
         </motion.div>
       </div>
 
