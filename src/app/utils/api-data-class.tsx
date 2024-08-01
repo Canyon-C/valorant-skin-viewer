@@ -280,7 +280,9 @@ export class RenderData {
           <Link
             href={`./${skin.displayName
               .replaceAll(" ", "")
-              .replaceAll("/", "")}?uuid=${skin.uuid}&level=3`}
+              .replaceAll("/", "")}?uuid=${skin.uuid}&level=${
+              skin.levelVideos.length - 1
+            }`}
           >
             <SkinCard>
               <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
