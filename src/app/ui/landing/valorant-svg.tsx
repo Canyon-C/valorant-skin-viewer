@@ -52,7 +52,7 @@ export const ValorantSVG = () => {
 
   return (
     <>
-      <div className="heightmoment flex flex-col justify-between">
+      <div className="heightmoment flex flex-col justify-between items-end">
         <motion.div
           ref={skinViewerButton}
           variants={appearVariants}
@@ -60,14 +60,14 @@ export const ValorantSVG = () => {
         >
           <Redirect />
         </motion.div>
-        <motion.div ref={searchBar} variants={appearVariants} initial="initial">
-          <LandingInput
-            placeholder="Search Skins"
-            type="search"
-            className="mb-10"
-          />
-        </motion.div>
       </div>
+      <motion.div ref={searchBar} variants={appearVariants} initial="initial">
+        <LandingInput
+          placeholder="Search Skins"
+          type="search"
+          className="mb-10"
+        />
+      </motion.div>
 
       <div className="landingContainer flex flex-col justify-start items-center ">
         <motion.div
