@@ -60,6 +60,7 @@ export class Render {
             className="displayborder-2 rounded-lg object-contain volume"
             key={index}
             controls
+            autoPlay
             ref={(el) => {
               if (el) {
                 el.volume = 0.35;
@@ -82,6 +83,7 @@ export class Render {
             key={index}
             className="w-full h-full rounded-lg object-contain"
             controls
+            autoPlay
             ref={(el) => {
               if (el) {
                 el.volume = 0.35;
