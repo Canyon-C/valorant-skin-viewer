@@ -19,7 +19,6 @@ export const ApiDataProvider = ({
   useEffect(() => {
     const init = async () => {
       const dataClassInstance = new FetchData();
-      // const render = await dataClassInstance.getData();
       setApiInstance(await dataClassInstance.getData());
     };
     init();

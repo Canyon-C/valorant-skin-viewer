@@ -125,7 +125,8 @@ export class FetchData {
     );
     const rawData: ApiResponse = await response.json();
     const bundleData: Bundle[] = rawData.data;
-    console.log("Fetching Data");
+
+    console.log(bundleData);
     const val_api_response = await fetch(
       `https://valorant-api.com/v1/bundles`,
       {
