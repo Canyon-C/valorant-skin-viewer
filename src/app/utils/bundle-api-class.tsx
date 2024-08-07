@@ -1,5 +1,6 @@
 require("dotenv").config();
 import { ReactElement } from "react";
+import Image from "next/image";
 
 type Item = {
   uuid: string;
@@ -24,7 +25,7 @@ type SkinBundle = {
 
 type ApiResponse = {
   status: number;
-  data: Bundle[];
+  data: SkinBundle[];
 };
 
 type ValApiBundle = {
@@ -42,46 +43,28 @@ type ValApiBundle = {
   assetPath: string;
 };
 
-type FinalizedFeaturedBundle = {
-  uuid: string;
-  displayName: string;
-  displayNameSubText: string | null;
-  description: string;
-  extraDescription: string;
-  promoDescription: string;
-  useAdditionalContext: boolean;
-  displayIcon: string;
-  displayIcon2: string;
-  logoIcon: string | null;
-  verticalPromoImage: string;
-  assetPath: string;
-};
-
-class Bundle {
+export class Bundle {
   name: string;
   image: string;
-  // base_price: number;
-  // bundleItems: Item[];
+  base_price?: number;
+  bundleItems?: Item[];
 
-  constructor(data: ValApiBundle) {
+  constructor(data: ValApiBundle, featuredBundle?: SkinBundle[]) {
     this.name = data.displayName;
     this.image = data.displayIcon;
-    // this.base_price = data[0].bundle_price;
-    // this.bundleItems = data[0].items;
+    if (featuredBundle) {
+      this.base_price = featuredBundle[0].bundle_price;
+      this.bundleItems = featuredBundle[0].items;
+    }
   }
 }
-
-// class AllBundles {
-//   allBundles: ValApiResponse;
-
-//   constructor(bundles: ValApiResponse) {
-//     this.allBundles = bundles;
-//   }
-// }
 
 export class RenderAllBundles {
   data: Bundle[];
   bundleImages: ReactElement[] = [];
+  bundleNames: string[] = [];
+  featuredBundleItems: ReactElement[] = [];
+  featuredBundleDisplayImage: ReactElement[] = [];
 
   constructor(bundleData: Bundle[]) {
     this.data = bundleData;
@@ -90,29 +73,63 @@ export class RenderAllBundles {
   renderBundles() {
     this.data.map((bundle, index) => {
       this.bundleImages.push(
-        <img key={index} alt={bundle.name} src={bundle.image}></img>
+        <Image
+          key={index}
+          alt={bundle.name}
+          src={bundle.image}
+          width={510}
+          height={510}
+        ></Image>
       );
     });
-    // console.log(this.bundleImages);
     return this.bundleImages;
+  }
+
+  renderBundleNames() {
+    this.data.map((bundle, index) => {
+      this.bundleNames.push(bundle.name);
+    });
+    return this.bundleNames;
+  }
+
+  renderFeaturedBundleDisplayImage() {
+    this.data.map((bundle, index) => {
+      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
+        this.featuredBundleDisplayImage.push(
+          <img
+            className="border"
+            alt={bundle.name}
+            key={index}
+            src={bundle.image}
+          ></img>
+        );
+      }
+    });
+    return this.featuredBundleDisplayImage;
+  }
+
+  renderFeaturedBundleItems() {
+    this.data.map((bundle, index) => {
+      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
+        bundle.bundleItems.map((bundleItem) => {
+          this.featuredBundleItems.push(
+            <img
+              className="object-contain"
+              alt={bundleItem.name}
+              key={index}
+              src={bundleItem.image}
+            ></img>
+          );
+        });
+      }
+    });
+    return this.featuredBundleItems;
   }
 }
 
-// class RenderFeaturedBundle {
-//   data: FeaturedBundle;
-
-//   constructor(data: FeaturedBundle) {
-//     this.data = data;
-//   }
-
-//   renderFeaturedBundle() {
-//     return <div>{}</div>;
-//   }
-// }
-
 export class FetchData {
+  renderInstance: RenderAllBundles = {} as RenderAllBundles;
   async getData() {
-    // console.log("rendering Bundles");
     const response = await fetch(
       "https://api.henrikdev.xyz/valorant/v2/store-featured",
       {
@@ -124,9 +141,7 @@ export class FetchData {
       }
     );
     const rawData: ApiResponse = await response.json();
-    const bundleData: Bundle[] = rawData.data;
-
-    console.log(bundleData);
+    const bundleData: SkinBundle[] = rawData.data;
     const val_api_response = await fetch(
       `https://valorant-api.com/v1/bundles`,
       {
@@ -136,8 +151,18 @@ export class FetchData {
 
     const valRawData = await val_api_response.json();
     const valBundleData: ValApiBundle[] = valRawData.data;
-    return new RenderAllBundles(
-      valBundleData.map((bundle) => new Bundle(bundle))
+    // console.log("Raw Data", rawData.data);
+    // console.log("Bundle Data:", bundleData);
+    // console.log("Featured Bundle UUID", bundleData[0].bundle_uuid);
+    // console.log(
+    //   "Images",
+    //   bundleData[0].items.map((item) => item.image)
+    // );
+    this.renderInstance = new RenderAllBundles(
+      valBundleData.map((bundle) => {
+        const isFeatured = bundle.uuid === bundleData[0].bundle_uuid;
+        return new Bundle(bundle, isFeatured ? bundleData : undefined);
+      })
     );
   }
 }
