@@ -26,14 +26,20 @@ export const OriginPage = async () => {
   featuredBundleDisplayImage = classInstance.renderFeaturedBundleDisplayImage();
   return (
     <>
-      <header className="text-3xl text-white text-center">
-        Featured Bundle
-      </header>
-      <div className="flex justify-center align-center py-5">
-        <div className="w-4/6">{featuredBundleDisplayImage}</div>
+      <div className="py-10">
+        <header className="text-3xl text-white text-center">
+          Featured Bundle
+        </header>
+
+        <div className="flex justify-center">{featuredBundleDisplayImage}</div>
+
+        <div className="items-conatiner flex justify-center items-center">
+          <div className="flex justify-center items-center w-4/6">
+            {featuredBundleItemImages}
+          </div>
+        </div>
       </div>
 
-      {/* <div className="flex w-60 border">{featuredBundleItemImages}</div> */}
       <BundleImages images={images} names={names} />
     </>
   );

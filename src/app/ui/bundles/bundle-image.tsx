@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { motion, useAnimate } from "framer-motion";
+import Link from "next/link";
 
 export const BundleImages = ({
   images,
@@ -9,25 +10,45 @@ export const BundleImages = ({
   images: JSX.Element[];
   names: string[];
 }) => {
+  const [isHovering, setIsHovering] = useState<number | null>(null);
+
   const hoverVariants = {
     initial: { filter: "grayscale(0%)", transition: { duration: 0.3 } },
     hoverActive: { filter: "grayscale(100%)", transition: { duration: 0.3 } },
+  };
+
+  const textVariants = {
+    initial: { opacity: 0, y: "15%" },
+    hoverActive: { opacity: 1, y: "-15%" },
   };
   return (
     <div className="flex flex-wrap justify-center align-center gap-3 px-5">
       {images.map((bundleImage, index) => {
         return (
-          <motion.div
-            whileHover="hoverActive"
-            variants={hoverVariants}
-            initial="initial"
+          <Link
             key={index}
-            style={{ overflow: "hidden" }}
-            className="text-white"
+            href={`./skin?query=${names[index].replace("//", "")}`}
           >
-            {names[index]}
-            {bundleImage}
-          </motion.div>
+            <motion.div
+              whileHover="hoverActive"
+              variants={hoverVariants}
+              initial="initial"
+              style={{ overflow: "hidden" }}
+              onMouseEnter={() => setIsHovering(index)}
+              onMouseLeave={() => setIsHovering(null)}
+            >
+              <div className="text-2xl text-center z-10 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <motion.p
+                  variants={textVariants}
+                  initial="initial"
+                  animate={isHovering === index ? "hoverActive" : "initial"}
+                >
+                  {names[index]}
+                </motion.p>
+              </div>
+              {bundleImage}
+            </motion.div>
+          </Link>
         );
       })}
     </div>

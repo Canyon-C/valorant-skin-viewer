@@ -73,13 +73,9 @@ export class RenderAllBundles {
   renderBundles() {
     this.data.map((bundle, index) => {
       this.bundleImages.push(
-        <Image
-          key={index}
-          alt={bundle.name}
-          src={bundle.image}
-          width={510}
-          height={510}
-        ></Image>
+        <div className="w-[510px] h-[250px]">
+          <Image key={index} alt={bundle.name} src={bundle.image} fill></Image>
+        </div>
       );
     });
     return this.bundleImages;
@@ -96,12 +92,15 @@ export class RenderAllBundles {
     this.data.map((bundle, index) => {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
         this.featuredBundleDisplayImage.push(
-          <img
-            className="border"
-            alt={bundle.name}
-            key={index}
-            src={bundle.image}
-          ></img>
+          <div className="display-image-container w-4/6">
+            <img
+              className=""
+              alt={bundle.name}
+              key={index}
+              src={bundle.image}
+              style={{ objectFit: "contain" }}
+            ></img>
+          </div>
         );
       }
     });
@@ -113,12 +112,16 @@ export class RenderAllBundles {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
         bundle.bundleItems.map((bundleItem) => {
           this.featuredBundleItems.push(
-            <img
-              className="object-contain"
-              alt={bundleItem.name}
-              key={index}
-              src={bundleItem.image}
-            ></img>
+            <div
+              key={bundleItem.uuid}
+              className="w-96 h-[8.5rem] flex justify-center items-center"
+            >
+              <img
+                style={{ objectFit: "contain" }}
+                alt={bundleItem.name}
+                src={bundleItem.image}
+              ></img>
+            </div>
           );
         });
       }
@@ -151,13 +154,7 @@ export class FetchData {
 
     const valRawData = await val_api_response.json();
     const valBundleData: ValApiBundle[] = valRawData.data;
-    // console.log("Raw Data", rawData.data);
-    // console.log("Bundle Data:", bundleData);
-    // console.log("Featured Bundle UUID", bundleData[0].bundle_uuid);
-    // console.log(
-    //   "Images",
-    //   bundleData[0].items.map((item) => item.image)
-    // );
+    console.log(bundleData[0].items);
     this.renderInstance = new RenderAllBundles(
       valBundleData.map((bundle) => {
         const isFeatured = bundle.uuid === bundleData[0].bundle_uuid;
