@@ -6,13 +6,16 @@ import {
 import Image from "next/image";
 import { BundleImages } from "./bundle-image";
 import { ReactElement } from "react";
+import { FeaturedBundleItems } from "./featured-bundle-items";
+import { FeaturedBundleDisplay } from "./featured-bundle-display";
 
 export const OriginPage = async () => {
   let classInstance: RenderAllBundles = {} as RenderAllBundles;
   let images: ReactElement[] = [];
-  let names: string[] = [];
+  let allBundlenames: string[] = [];
   let featuredBundleDisplayImage: JSX.Element[] = [];
   let featuredBundleItemImages: JSX.Element[] = [];
+  let featuredBundleDisplayImageName: string;
   const initialize = async () => {
     const instance = new FetchData();
     await instance.getData();
@@ -21,8 +24,9 @@ export const OriginPage = async () => {
 
   await initialize();
   images = classInstance.renderBundles();
-  names = classInstance.renderBundleNames();
+  allBundlenames = classInstance.renderBundleNames();
   featuredBundleItemImages = classInstance.renderFeaturedBundleItems();
+  featuredBundleDisplayImageName = classInstance.getFeaturedBundleDisplayName();
   featuredBundleDisplayImage = classInstance.renderFeaturedBundleDisplayImage();
   return (
     <>
@@ -31,16 +35,17 @@ export const OriginPage = async () => {
           Featured Bundle
         </header>
 
-        <div className="flex justify-center">{featuredBundleDisplayImage}</div>
+        <FeaturedBundleDisplay
+          featuredBundleDisplayImage={featuredBundleDisplayImage}
+          featuredBundleDisplayImageName={featuredBundleDisplayImageName}
+        />
 
-        <div className="items-conatiner flex justify-center items-center">
-          <div className="flex justify-center items-center w-4/6">
-            {featuredBundleItemImages}
-          </div>
-        </div>
+        <FeaturedBundleItems
+          featuredBundleItemImages={featuredBundleItemImages}
+        />
       </div>
 
-      <BundleImages images={images} names={names} />
+      <BundleImages images={images} names={allBundlenames} />
     </>
   );
 };

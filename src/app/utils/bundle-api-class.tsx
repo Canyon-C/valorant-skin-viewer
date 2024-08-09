@@ -1,6 +1,7 @@
 require("dotenv").config();
 import { ReactElement } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 type Item = {
   uuid: string;
@@ -65,6 +66,8 @@ export class RenderAllBundles {
   bundleNames: string[] = [];
   featuredBundleItems: ReactElement[] = [];
   featuredBundleDisplayImage: ReactElement[] = [];
+  bundleItemNames: ReactElement[] = [];
+  featuredBundleDisplayName: string = "";
 
   constructor(bundleData: Bundle[]) {
     this.data = bundleData;
@@ -73,9 +76,14 @@ export class RenderAllBundles {
   renderBundles() {
     this.data.map((bundle, index) => {
       this.bundleImages.push(
-        <div className="w-[510px] h-[250px]">
-          <Image key={index} alt={bundle.name} src={bundle.image} fill></Image>
-        </div>
+        <Image
+          key={index}
+          alt={bundle.name}
+          src={bundle.image}
+          width={500}
+          height={300}
+          className="h-full"
+        ></Image>
       );
     });
     return this.bundleImages;
@@ -92,40 +100,54 @@ export class RenderAllBundles {
     this.data.map((bundle, index) => {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
         this.featuredBundleDisplayImage.push(
-          <div className="display-image-container w-4/6">
+          <Link
+            className=""
+            href={`./skin?query=${bundle.name.replace("//", "")}`}
+          >
             <img
-              className=""
               alt={bundle.name}
-              key={index}
               src={bundle.image}
-              style={{ objectFit: "contain" }}
+              className="object-fill"
             ></img>
-          </div>
+          </Link>
         );
       }
     });
     return this.featuredBundleDisplayImage;
   }
 
-  renderFeaturedBundleItems() {
+  getFeaturedBundleDisplayName() {
     this.data.map((bundle, index) => {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
-        bundle.bundleItems.map((bundleItem) => {
+        this.featuredBundleDisplayName = bundle.name;
+      }
+    });
+    return this.featuredBundleDisplayName;
+  }
+
+  renderFeaturedBundleItems() {
+    this.featuredBundleItems = [];
+
+    this.data.forEach((bundle) => {
+      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
+        bundle.bundleItems.forEach((bundleItem) => {
           this.featuredBundleItems.push(
             <div
               key={bundleItem.uuid}
-              className="w-96 h-[8.5rem] flex justify-center items-center"
+              className="flex flex-col items-center p-4 w-5/6 md:w-1/3 lg:w-1/5"
             >
               <img
-                style={{ objectFit: "contain" }}
                 alt={bundleItem.name}
                 src={bundleItem.image}
-              ></img>
+                className="w-3/5 lg:w-full h-48 object-contain mb-2"
+              />
+              <p className="text-white text-center">{bundleItem.name}</p>
             </div>
           );
         });
       }
     });
+
     return this.featuredBundleItems;
   }
 }
@@ -154,7 +176,6 @@ export class FetchData {
 
     const valRawData = await val_api_response.json();
     const valBundleData: ValApiBundle[] = valRawData.data;
-    console.log(bundleData[0].items);
     this.renderInstance = new RenderAllBundles(
       valBundleData.map((bundle) => {
         const isFeatured = bundle.uuid === bundleData[0].bundle_uuid;

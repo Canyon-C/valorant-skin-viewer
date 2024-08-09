@@ -22,18 +22,19 @@ export const BundleImages = ({
     hoverActive: { opacity: 1, y: "-15%" },
   };
   return (
-    <div className="flex flex-wrap justify-center align-center gap-3 px-5">
+    <div className="flex flex-wrap justify-center align-center gap-3 px-5 w-full">
       {images.map((bundleImage, index) => {
         return (
           <Link
             key={index}
             href={`./skin?query=${names[index].replace("//", "")}`}
+            className=""
           >
             <motion.div
               whileHover="hoverActive"
               variants={hoverVariants}
               initial="initial"
-              style={{ overflow: "hidden" }}
+              className="w-fit flex justify-center h-full"
               onMouseEnter={() => setIsHovering(index)}
               onMouseLeave={() => setIsHovering(null)}
             >
