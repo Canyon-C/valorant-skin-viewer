@@ -31,7 +31,7 @@ export const OriginPage = async () => {
   return (
     <>
       <div className="py-10">
-        <header className="text-3xl text-white text-center">
+        <header className="text-3xl text-white text-center pb-5">
           Featured Bundle
         </header>
 
