@@ -30,7 +30,7 @@ export const OriginPage = async () => {
   featuredBundleDisplayImage = classInstance.renderFeaturedBundleDisplayImage();
   return (
     <>
-      <p className="absolute textAccent text-sm md:text-base">Beta v1.1</p>
+      <p className="absolute textAccent text-sm md:text-base px-1">Beta v1.1</p>
       <div className="py-10 ">
         <header className="text-3xl text-white text-center pb-5">
           Featured Bundle
