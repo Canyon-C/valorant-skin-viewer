@@ -134,12 +134,12 @@ export class RenderAllBundles {
           this.featuredBundleItems.push(
             <div
               key={bundleItem.uuid}
-              className="flex flex-col items-center p-4 w-5/6 md:w-1/3 lg:w-1/5"
+              className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/5"
             >
               <img
                 alt={bundleItem.name}
                 src={bundleItem.image}
-                className="w-3/5 lg:w-full h-48 object-contain mb-2"
+                className="w-full h-48 object-contain mb-2"
               />
               <p className="text-white text-center">{bundleItem.name}</p>
             </div>

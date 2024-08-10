@@ -18,8 +18,8 @@ export const FeaturedBundleDisplay = ({
   };
 
   const textVariants = {
-    initial: { opacity: 0, y: "15%" },
-    hoverActive: { opacity: 1, y: "-15%" },
+    initial: { y: "15%" },
+    hoverActive: { y: "-15%" },
   };
   return (
     <div className="featured-Bundle-Display-Image-container w-full flex justify-center items-center">
@@ -32,7 +32,11 @@ export const FeaturedBundleDisplay = ({
         className="featured-bundle-display-image-container w-full md:w-4/5 lg:w-1/2"
       >
         {featuredBundleDisplayImage}
-        <div className="text-2xl text-center z-10 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div
+          className={`text-2xl text-center z-10 text-white opacity:100 ${
+            isHovering === true ? "md:opactiy:100" : "md:opacity-0"
+          } transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+        >
           <motion.p
             variants={textVariants}
             initial="initial"

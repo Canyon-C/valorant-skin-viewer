@@ -18,8 +18,8 @@ export const BundleImages = ({
   };
 
   const textVariants = {
-    initial: { opacity: 0, y: "15%" },
-    hoverActive: { opacity: 1, y: "-15%" },
+    initial: { y: "15%" },
+    hoverActive: { y: "-15%" },
   };
   return (
     <div className="flex flex-wrap justify-center align-center gap-3 px-5 w-full">
@@ -38,7 +38,11 @@ export const BundleImages = ({
               onMouseEnter={() => setIsHovering(index)}
               onMouseLeave={() => setIsHovering(null)}
             >
-              <div className="text-2xl text-center z-10 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div
+                className={`text-2xl text-center z-10 text-white opacity:100 ${
+                  isHovering === index ? "md:opacity-100" : "md:opacity-0"
+                } transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+              >
                 <motion.p
                   variants={textVariants}
                   initial="initial"
