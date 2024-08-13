@@ -9,7 +9,7 @@ import { ArrowBackDetails } from "./arrow-back-skindetails";
 export const DataTable = () => {
   return (
     <DataProvider>
-      <div className="skinInfoContainer flex flex-col lg:flex-row gap-5 pt-5 lg:pt-0 px-5 h-fit border pb-5 lg:pb-0 lg:h-screen items-center">
+      <div className="skinInfoContainer flex flex-col lg:flex-row gap-5 pt-5 lg:pt-0 px-5 h-fit pb-5 lg:pb-0 lg:h-screen items-center">
         <ArrowBackDetails />
 
         <div className="data-table flex flex-col items-center w-full lg:w-auto lg:grow h-fit lg:h-[800px] border borderAccent rounded-3xl">
