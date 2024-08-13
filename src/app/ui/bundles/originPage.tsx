@@ -8,6 +8,7 @@ import { BundleImages } from "./bundle-image";
 import { ReactElement } from "react";
 import { FeaturedBundleItems } from "./featured-bundle-items";
 import { FeaturedBundleDisplay } from "./featured-bundle-display";
+import { BundleHeader } from "./bundle-header";
 
 export const OriginPage = async () => {
   let classInstance: RenderAllBundles = {} as RenderAllBundles;
@@ -32,10 +33,7 @@ export const OriginPage = async () => {
     <>
       <p className="absolute textAccent text-sm md:text-base px-1">Beta v1.1</p>
       <div className="py-10 ">
-        <header className="text-3xl text-white text-center pb-5">
-          Featured Bundle
-        </header>
-
+        <BundleHeader />
         <FeaturedBundleDisplay
           featuredBundleDisplayImage={featuredBundleDisplayImage}
           featuredBundleDisplayImageName={featuredBundleDisplayImageName}

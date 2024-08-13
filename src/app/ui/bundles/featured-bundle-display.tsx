@@ -22,7 +22,7 @@ export const FeaturedBundleDisplay = ({
     hoverActive: { y: "-15%" },
   };
   return (
-    <div className="featured-Bundle-Display-Image-container w-full flex justify-center items-center">
+    <div className="featured-Bundle-Display-Image-container pt-5 w-full flex justify-center items-center">
       <motion.div
         whileHover="hoverActive"
         variants={hoverVariants}
