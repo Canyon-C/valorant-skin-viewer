@@ -3,6 +3,7 @@ import * as React from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { cn } from "@/lib/utils";
+import { ArrowBackSVG } from "./arrow-back";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -23,7 +24,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       replace(`${pathname}?${params.toString()}`);
     }, 0);
     return (
-      <div className="w-full flex justify-center align-center">
+      <div className="w-full flex justify-center align-center ">
+        <ArrowBackSVG />
         <input
           onChange={(e) => handleSearch(e.target.value)}
           defaultValue={searchParams.get("query")?.toString()}
