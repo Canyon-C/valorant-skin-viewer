@@ -3,7 +3,6 @@ import {
   RenderAllBundles,
   Bundle,
 } from "@/app/utils/bundle-api-class";
-import Image from "next/image";
 import { BundleImages } from "./bundle-image";
 import { ReactElement } from "react";
 import { FeaturedBundleItems } from "./featured-bundle-items";
