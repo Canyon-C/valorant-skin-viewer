@@ -162,17 +162,11 @@ export class FetchData {
         headers: {
           Authorization: process.env.API_KEY as string,
         },
-        cache: "force-cache",
       }
     );
     const rawData: ApiResponse = await response.json();
     const bundleData: SkinBundle[] = rawData.data;
-    const val_api_response = await fetch(
-      `https://valorant-api.com/v1/bundles`,
-      {
-        cache: "force-cache",
-      }
-    );
+    const val_api_response = await fetch(`https://valorant-api.com/v1/bundles`);
 
     const valRawData = await val_api_response.json();
     const valBundleData: ValApiBundle[] = valRawData.data;
