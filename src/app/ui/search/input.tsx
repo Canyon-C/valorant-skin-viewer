@@ -24,7 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       replace(`${pathname}?${params.toString()}`);
     }, 0);
     return (
-      <div className="w-full flex justify-center align-center ">
+      <div className="w-full flex justify-center items-center">
         <ArrowBackSVG />
         <input
           onChange={(e) => handleSearch(e.target.value)}
