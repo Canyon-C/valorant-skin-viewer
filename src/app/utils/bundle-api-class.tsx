@@ -161,7 +161,6 @@ export class FetchData {
         method: "GET",
         headers: {
           Authorization: process.env.API_KEY as string,
-          "Cache-Control": "no-store",
         },
       }
     );
