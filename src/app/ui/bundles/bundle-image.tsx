@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useAnimate } from "framer-motion";
 import Link from "next/link";
 
 export const BundleImages = ({
@@ -22,7 +22,7 @@ export const BundleImages = ({
     hoverActive: { y: "-15%" },
   };
   return (
-    <div className="flex flex-wrap justify-center align-center gap-3 px-5 w-full">
+    <div className="flex flex-wrap justify-center items-center gap-3 px-5 w-full">
       {images.map((bundleImage, index) => {
         return (
           <Link
@@ -34,7 +34,7 @@ export const BundleImages = ({
               whileHover="hoverActive"
               variants={hoverVariants}
               initial="initial"
-              className="w-fit flex justify-center h-full"
+              className="w-fit flex justify-center h-full relative"
               onMouseEnter={() => setIsHovering(index)}
               onMouseLeave={() => setIsHovering(null)}
             >
