@@ -29,7 +29,7 @@ export const FeaturedBundleDisplay = ({
         initial="initial"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        className="featured-bundle-display-image-container w-full md:w-4/5 lg:w-1/2"
+        className="featured-bundle-display-image-container relative w-full md:w-4/5 lg:w-1/2"
       >
         {featuredBundleDisplayImage}
         <div
