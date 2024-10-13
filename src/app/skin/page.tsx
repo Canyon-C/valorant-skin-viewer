@@ -3,6 +3,8 @@ import { LazyRender } from "../utils/intersection-observer";
 import { Input } from "../ui/search/input";
 import { Suspense } from "react";
 
+export const runtime = "edge";
+
 export default async function Home() {
   return (
     <main className="">
