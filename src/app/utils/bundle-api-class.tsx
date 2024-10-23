@@ -142,7 +142,7 @@ export class RenderAllBundles {
               key={bundleItem.uuid}
               className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/5"
             >
-              {itemImage ? itemImage : <p className="text-white">Image not available</p>}
+              {itemImage ? itemImage : <p className="text-white w-full h-48 object-contain mb-2">Image not available</p>}
               <p className="text-red-500 text-center">{bundleItem.base_price} VP</p>
               
               <p className="text-white text-center">{bundleItem.name}</p>
