@@ -131,8 +131,10 @@ export class RenderAllBundles {
 
     this.data.forEach((bundle) => {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
+        
         bundle.bundleItems.forEach((bundleItem) => {
           const itemImage = <img
+          alt={bundleItem.name}
           src={bundleItem.image}
           className="w-full h-48 object-contain mb-2"
         />           
@@ -170,7 +172,6 @@ export class FetchData {
     const rawData: ApiResponse = await response.json();
     const bundleData: SkinBundle[] = rawData.data;
     const val_api_response = await fetch(`https://valorant-api.com/v1/bundles`);
-
     const valRawData = await val_api_response.json();
     const valBundleData: ValApiBundle[] = valRawData.data;
     this.renderInstance = new RenderAllBundles(
