@@ -2,6 +2,8 @@ import { RawSkinData, Skin } from "./api-data-class";
 import { ReactElement } from "react";
 import Image from "next/image";
 
+const DEFAULT_VIDEO_VOLUME = 0.25;
+
 export class Render {
   data: Skin;
   skinChromas: ReactElement[] = [];
@@ -63,7 +65,7 @@ export class Render {
             autoPlay
             ref={(el) => {
               if (el) {
-                el.volume = 0.35;
+                el.volume = DEFAULT_VIDEO_VOLUME;
               }
             }}
           >
@@ -86,7 +88,7 @@ export class Render {
             autoPlay
             ref={(el) => {
               if (el) {
-                el.volume = 0.35;
+                el.volume = DEFAULT_VIDEO_VOLUME;
               }
             }}
           >

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -11,6 +11,25 @@ export const BundleImages = ({
   names: string[];
 }) => {
   const [isHovering, setIsHovering] = useState<number | null>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(10);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!bottomRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && visibleCount < images.length) {
+          setVisibleCount((prev) => Math.min(prev + 10, images.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(bottomRef.current);
+    return () => observer.disconnect();
+  }, [bottomRef.current, visibleCount, images.length]);
+
+  const displayedImages = images.slice(0, visibleCount);
+  const displayedNames = names.slice(0, visibleCount);
 
   const hoverVariants = {
     initial: { filter: "grayscale(0%)", transition: { duration: 0.3 } },
@@ -21,13 +40,14 @@ export const BundleImages = ({
     initial: { y: "15%" },
     hoverActive: { y: "-15%" },
   };
+
   return (
     <div className="flex flex-wrap justify-center align-center gap-3 px-5 w-full">
-      {images.map((bundleImage, index) => {
+      {displayedImages.map((bundleImage, index) => {
         return (
           <Link
             key={index}
-            href={`./skin?query=${names[index].replace("//", "")}`}
+            href={`./skin?query=${displayedNames[index].replace("//", "")}`}
             className=""
           >
             <motion.div
@@ -48,7 +68,7 @@ export const BundleImages = ({
                   initial="initial"
                   animate={isHovering === index ? "hoverActive" : "initial"}
                 >
-                  {names[index]}
+                  {displayedNames[index]}
                 </motion.p>
               </div>
               {bundleImage}
@@ -56,6 +76,7 @@ export const BundleImages = ({
           </Link>
         );
       })}
+      <div ref={bottomRef} />
     </div>
   );
 };
