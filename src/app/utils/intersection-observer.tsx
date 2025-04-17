@@ -5,57 +5,53 @@ import { useSearchParams } from "next/navigation";
 import { WeaponType } from "./api-data-class";
 
 export const LazyRender = () => {
-  const [skins, setSkins] = useState<any[]>([]);
   const searchParams = useSearchParams();
   const [appliedFilters, setAppliedFilters] = useState<WeaponType[]>([]);
-  let data = useRef<RenderData>();
-  const FilterEListener = searchParams.getAll("filter");
-  let query = searchParams.get("query");
-  let realQuery = "";
-  if (query) {
-    realQuery = query;
-  }
+  const [allSkins, setAllSkins] = useState<React.ReactNode[]>([]);
+  const [displayedSkins, setDisplayedSkins] = useState<React.ReactNode[]>([]);
+  const [visibleCount, setVisibleCount] = useState<number>(20);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  let query = searchParams.get("query") || "";
 
+  // fetch data once
   useEffect(() => {
-    const getData = async () => {
+    const loadData = async () => {
       const apiData = new ApiData();
-      const tempData = await apiData.getData();
-      return tempData;
-    };
-    const getSkins = async () => {
-      data.current = await getData();
+      const instance = await apiData.getData();
+      const skinsFull = await instance.renderSkins(
+        searchParams.getAll("filter") as WeaponType[],
+        query
+      );
+      setAllSkins(skinsFull);
       setAppliedFilters(searchParams.getAll("filter") as WeaponType[]);
     };
-    getSkins();
-  }, []);
+    loadData();
+  }, [query, searchParams]);
 
+  // update displayed skins when allSkins or visibleCount changes
   useEffect(() => {
-    const set = async () => {
-      if (data.current) {
-        setSkins([await data.current.renderSkins(appliedFilters, realQuery)]);
-      }
-    };
-    set();
-  }, [appliedFilters]);
+    setDisplayedSkins(allSkins.slice(0, visibleCount));
+  }, [allSkins, visibleCount]);
 
+  // intersection observer to load more when reaching bottom
   useEffect(() => {
-    setSkins([]);
-    setAppliedFilters(searchParams.getAll("filter") as WeaponType[]);
-  }, [FilterEListener.length]);
-
-  useEffect(() => {
-    const set = async () => {
-      if (data.current) {
-        setSkins([]);
-        setAppliedFilters(searchParams.getAll("filter") as WeaponType[]);
-      }
-    };
-    set();
-  }, [realQuery.length]);
+    if (!bottomRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && visibleCount < allSkins.length) {
+          setVisibleCount((prev) => Math.min(prev + 20, allSkins.length));
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(bottomRef.current);
+    return () => observer.disconnect();
+  }, [allSkins.length, visibleCount]);
 
   return (
     <div className="flex justify-center flex-wrap align-center gap-10 py-10">
-      {skins}
+      {displayedSkins}
+      <div ref={bottomRef} />
     </div>
   );
 };
