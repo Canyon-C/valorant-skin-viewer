@@ -2,7 +2,7 @@ import { RawSkinData, Skin } from "./api-data-class";
 import { ReactElement } from "react";
 import Image from "next/image";
 
-const DEFAULT_VIDEO_VOLUME = 0.25;
+const DEFAULT_VIDEO_VOLUME = 0.15;
 
 export class Render {
   data: Skin;
