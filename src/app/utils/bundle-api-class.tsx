@@ -1,4 +1,3 @@
-
 import { ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,10 +48,12 @@ export class Bundle {
   image: string;
   base_price?: number;
   bundleItems?: Item[];
+  isFeatured: boolean;
 
   constructor(data: ValApiBundle, featuredBundle?: SkinBundle[]) {
     this.name = data.displayName;
     this.image = data.displayIcon;
+    this.isFeatured = !!featuredBundle;
     if (featuredBundle) {
       this.base_price = featuredBundle[0].bundle_price;
       this.bundleItems = featuredBundle[0].items;
@@ -74,25 +75,29 @@ export class RenderAllBundles {
   }
 
   renderBundles() {
-    this.data.map((bundle, index) => {
-      this.bundleImages.push(
-        <Image
-          key={index}
-          alt={bundle.name}
-          src={bundle.image}
-          width={500}
-          height={300}
-          className="h-full"
-        ></Image>
-      );
-    });
+    this.data
+      .filter((bundle) => !bundle.isFeatured)
+      .map((bundle, index) => {
+        this.bundleImages.push(
+          <Image
+            key={index}
+            alt={bundle.name}
+            src={bundle.image}
+            width={500}
+            height={300}
+            className="h-full"
+          ></Image>
+        );
+      });
     return this.bundleImages;
   }
 
   renderBundleNames() {
-    this.data.map((bundle, index) => {
-      this.bundleNames.push(bundle.name);
-    });
+    this.data
+      .filter((bundle) => !bundle.isFeatured)
+      .map((bundle, index) => {
+        this.bundleNames.push(bundle.name);
+      });
     return this.bundleNames;
   }
 
@@ -109,7 +114,9 @@ export class RenderAllBundles {
               src={bundle.image}
               className="object-fill"
             ></img>
-            <p className="text-red-500 text-center pt-2">Bundle Price: {bundle.base_price} VP</p>
+            <p className="text-red-500 text-center pt-2">
+              Bundle Price: {bundle.base_price} VP
+            </p>
           </Link>
         );
       }
@@ -131,20 +138,29 @@ export class RenderAllBundles {
 
     this.data.forEach((bundle) => {
       if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
-        
         bundle.bundleItems.forEach((bundleItem) => {
-          const itemImage = bundleItem.image ? <img
-          src={bundleItem.image}
-          className="w-full h-48 object-contain mb-2"
-        /> : null;          
+          const itemImage = bundleItem.image ? (
+            <img
+              src={bundleItem.image}
+              className="w-full h-48 object-contain mb-2"
+            />
+          ) : null;
           this.featuredBundleItems.push(
             <div
               key={bundleItem.uuid}
               className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/5"
             >
-              {itemImage ? itemImage : <p className="text-white w-full h-48 mb-2 flex justify-center items-center">Image not available</p>}
-              <p className="text-red-500 text-center">{bundleItem.base_price} VP</p>
-              
+              {itemImage ? (
+                itemImage
+              ) : (
+                <p className="text-white w-full h-48 mb-2 flex justify-center items-center">
+                  Image not available
+                </p>
+              )}
+              <p className="text-red-500 text-center">
+                {bundleItem.base_price} VP
+              </p>
+
               <p className="text-white text-center">{bundleItem.name}</p>
             </div>
           );

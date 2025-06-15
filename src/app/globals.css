@@ -24,6 +24,8 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
+    --border-accent-light: 240 5% 80%; /* Added for light mode accent border */
+    --border-accent-dark: 0 0% 100% / 0.3; /* Added for dark mode accent border (white 30% opacity) */
   }
 
   .dark {
@@ -46,6 +48,9 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    /* --border-accent-dark is defined in :root and will be used by .dark .borderAccent if not overridden here */
+    /* Alternatively, you could define it here if you prefer: */
+    /* --border-accent-dark: 0 0% 100% / 0.3; */
   }
 }
 
@@ -53,9 +58,52 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+  html {
+    width: 100%; /* Added for explicitness */
+    height: 100%; /* Ensure html takes full viewport height */
+    overflow: hidden; /* Prevent scrolling and hide scrollbars */
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    /* Hide scrollbar for IE, Edge and other browsers */
+    -ms-overflow-style: none;
   }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    width: 100%; /* Added for explicitness */
+    height: 100%; /* Ensure body takes full html height */
+    overflow: hidden; /* Prevent scrolling and hide scrollbars */
+    @apply bg-background text-foreground;
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    /* Hide scrollbar for IE, Edge and other browsers */
+    -ms-overflow-style: none;
+  }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ensure Next.js root div conforms to body height */
+  #__next {
+    height: 100%;
+  }
+}
+
+/* Custom utility to hide scrollbar */
+.no-scrollbar {
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+  /* Hide scrollbar for IE, Edge */
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .background {
@@ -63,12 +111,12 @@
 }
 
 .borderAccent {
-  --tw-bg-opacity: 1;
-  border-color: #ffffff28;
-  /* border-color: #ffffff1a; */
-  /* border-color: #eff2f699; */
-  /* border-color: #ff4655; */
+  border-color: hsl(var(--border-accent-light));
 }
+.dark .borderAccent {
+  border-color: hsl(var(--border-accent-dark));
+}
+
 .backgroundAccent {
   --tw-bg-opacity: 1;
   background: #ffffff1a;

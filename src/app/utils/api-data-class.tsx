@@ -273,34 +273,28 @@ export class RenderData {
         return;
       }
       this.elements.push(
-        <div
+        <Link
           key={skin.uuid}
-          className={`card w-fit h-full flex justify-center items-center`}
+          href={`./${skin.displayName
+            .replaceAll(" ", "")
+            .replaceAll("/", "")}?uuid=${skin.uuid}&level=${
+            skin.levelVideos.length - 1
+          }`}
+          className="flex flex-col items-center h-full p-4 bg-black" // Updated className
         >
-          <Link
-            href={`./${skin.displayName
-              .replaceAll(" ", "")
-              .replaceAll("/", "")}?uuid=${skin.uuid}&level=${
-              skin.levelVideos.length - 1
-            }`}
-          >
-            <SkinCard>
-              <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-                <header className="text-white text-center w-fit text-xl">
-                  {skin.displayName}
-                </header>
-                <Image
-                  className="object-contain w-4/5 h-3/5"
-                  src={`${skin.fullRender}`}
-                  alt={`${skin.displayName}`}
-                  width={512}
-                  height={128}
-                  loading="lazy"
-                />
-              </div>
-            </SkinCard>
-          </Link>
-        </div>
+          {/* Removed the wrapping div, Image and p are direct children of Link */}
+          <Image
+            className="object-contain w-full h-32" // Fixed height for image consistency
+            src={skin.fullRender}
+            alt={skin.displayName}
+            width={300} // Intrinsic width for Next/Image optimization
+            height={100} // Intrinsic height for Next/Image optimization
+            loading="lazy"
+          />
+          <p className="text-white text-center mt-3 text-sm font-medium truncate w-full">
+            {skin.displayName}
+          </p>
+        </Link>
       );
     });
     return this.elements;
