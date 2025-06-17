@@ -145,3 +145,100 @@
     height: fit-content;
   }
 }
+
+.filter-button {
+  position: relative;
+}
+
+.filter-button-line {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 22px; /* Increased from 12px */
+  background-color: #6b7280;
+  /* Default transition for hover OFF: line is delayed */
+  transition: height 0.15s ease 0.075s, background-color 0.15s ease 0.075s;
+  z-index: 5;
+}
+
+.filter-button-line-active {
+  height: 100%;
+  background-color: #ff4654;
+}
+
+.filter-button-bg {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #ff4654;
+  /* Default transition for hover OFF: background is immediate */
+  transition: width 0.15s ease 0s;
+  z-index: 1;
+}
+
+.filter-button-bg-active {
+  width: calc(100% - 2px);
+}
+
+/* Overrides for hover ON animation sequence */
+.animate-active-state .filter-button-line {
+  /* Line is immediate */
+  transition-delay: 0s, 0s;
+}
+
+.animate-active-state .filter-button-bg {
+  /* Background is delayed */
+  transition-delay: 0.075s;
+}
+
+.filter-button-active .filter-button-line {
+  /* Ensure active state styles are maintained, transition properties are from .filter-button-line */
+  height: 100%;
+  background-color: #ff4654;
+}
+
+.filter-button-active .filter-button-bg {
+  /* Ensure active state styles are maintained, transition properties are from .filter-button-bg */
+  width: calc(100% - 2px);
+}
+
+.filter-divider {
+  width: 100%;
+  height: 2px;
+  background-color: theme('colors.gridDivider');
+  margin: 0;
+}
+
+/* Skin grid hover animation */
+.skin-grid-item {
+  position: relative;
+  transition: all 0.2s ease-out;
+}
+
+.skin-grid-item:hover {
+  box-shadow: 0 0 0 2px #ff4654;
+  border-color: #ff4654;
+}
+
+/* Alternative approach using pseudo-element for cleaner animation */
+.skin-grid-item::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff4654, #ff4654);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  pointer-events: none;
+}
+
+.skin-grid-item:hover::before {
+  opacity: 1;
+}

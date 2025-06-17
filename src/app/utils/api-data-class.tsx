@@ -160,6 +160,7 @@ export class Skin {
   chromaRenders: string[];
   chromaVideos: (string | null)[];
   levelVideos: (string | null)[];
+  chromaSwatches: (string | null)[];
   bundle: BundleType;
   weapon: WeaponType;
 
@@ -176,6 +177,9 @@ export class Skin {
     });
     this.levelVideos = data.levels.map((levels) => {
       return levels.streamedVideo;
+    });
+    this.chromaSwatches = data.chromas.map((chroma) => {
+      return chroma.swatch;
     });
 
     const names = this.displayName.split(/ (?!.* )/);
@@ -219,7 +223,11 @@ export class RenderData {
     return this.elements;
   }
 
-  async renderSkins(filterProp: WeaponType[], searchQuery?: string | null) {
+  async renderSkins(
+    filterProp: WeaponType[],
+    searchQuery?: string | null,
+    onSkinClick?: (uuid: string) => void
+  ) {
     this.elements = [];
     this.filteredData = [];
 
@@ -273,28 +281,26 @@ export class RenderData {
         return;
       }
       this.elements.push(
-        <Link
+        <div
           key={skin.uuid}
-          href={`./${skin.displayName
-            .replaceAll(" ", "")
-            .replaceAll("/", "")}?uuid=${skin.uuid}&level=${
-            skin.levelVideos.length - 1
-          }`}
-          className="flex flex-col items-center h-full p-4 bg-black" // Updated className
+          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:animate-red-outline-hover"
+          onClick={() => onSkinClick?.(skin.uuid)}
         >
-          {/* Removed the wrapping div, Image and p are direct children of Link */}
-          <Image
-            className="object-contain w-full h-32" // Fixed height for image consistency
-            src={skin.fullRender}
-            alt={skin.displayName}
-            width={300} // Intrinsic width for Next/Image optimization
-            height={100} // Intrinsic height for Next/Image optimization
-            loading="lazy"
-          />
-          <p className="text-white text-center mt-3 text-sm font-medium truncate w-full">
-            {skin.displayName}
-          </p>
-        </Link>
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center h-full p-4">
+            <Image
+              className="object-contain w-full h-32"
+              src={skin.fullRender}
+              alt={skin.displayName}
+              width={300}
+              height={100}
+              loading="lazy"
+            />
+            <p className="text-white text-center mt-3 text-sm font-medium truncate w-full">
+              {skin.displayName}
+            </p>
+          </div>
+        </div>
       );
     });
     return this.elements;

@@ -1,10 +1,10 @@
 "use client";
 import { ApiData } from "./api-data-class";
-import { FetchData } from "./bundle-api-class";
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { WeaponType } from "./api-data-class";
 import Link from "next/link";
+import { useOverlay } from "./overlay-context";
 
 export const LazyRender = () => {
   const searchParams = useSearchParams();
@@ -13,6 +13,7 @@ export const LazyRender = () => {
   const [displayedSkins, setDisplayedSkins] = useState<React.ReactNode[]>([]);
   const [visibleCount, setVisibleCount] = useState<number>(20);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { openOverlay } = useOverlay();
   let query = searchParams.get("query") || "";
   const [numCols, setNumCols] = useState(1); // Default to 1, updated client-side
 
@@ -47,7 +48,8 @@ export const LazyRender = () => {
         const instance = await apiData.getData();
         const skinsFull = await instance.renderSkins(
           searchParams.getAll("filter") as WeaponType[],
-          query
+          query,
+          openOverlay // Pass the click handler directly
         );
         setAllSkins(skinsFull);
         setAppliedFilters(searchParams.getAll("filter") as WeaponType[]);
@@ -73,15 +75,17 @@ export const LazyRender = () => {
             .map((bundle: any) => (
               <Link
                 key={bundle.uuid}
-                className="flex flex-col items-center h-full p-4 bg-black"
+                className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:animate-red-outline-hover"
                 href={`/?view=skins&query=${encodeURIComponent(bundle.name.replace("//", ""))}`}
               >
-                <img
-                  alt={bundle.name}
-                  src={bundle.image}
-                  className="object-contain w-full h-32"
-                />
-                <p className="text-white text-center mt-3 text-sm font-medium truncate w-full" title={bundle.name}>{bundle.name}</p>
+                <div className="relative z-10 flex flex-col items-center h-full p-4">
+                  <img
+                    alt={bundle.name}
+                    src={bundle.image}
+                    className="object-contain w-full h-32"
+                  />
+                  <p className="text-white text-center mt-3 text-sm font-medium truncate w-full" title={bundle.name}>{bundle.name}</p>
+                </div>
               </Link>
             ));
           
@@ -95,7 +99,7 @@ export const LazyRender = () => {
       }
     };
     loadData();
-  }, [query, searchParams, currentView]);
+  }, [query, searchParams, currentView, openOverlay]);
 
   // update displayed skins when allSkins or visibleCount changes
   useEffect(() => {
@@ -132,13 +136,13 @@ export const LazyRender = () => {
 
     return Array.from({ length: numPlaceholdersToRender }).map((_, index) => (
       <div key={`placeholder-${index}`} className="bg-black h-full">
-        {/* This div fills a grid cell. The parent's gap-px bg-border provides grid lines. */}
+        {/* This div fills a grid cell. The parent's gap-0.5 bg-gridDivider provides grid lines. */}
       </div>
     ));
   };
 
   return (
-    <div className="w-[60%] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-border">
+    <div className="w-[60%] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5 bg-gridDivider">
       {displayedSkins}
       {renderPlaceholders()}
       <div ref={bottomRef} />

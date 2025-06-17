@@ -10,11 +10,13 @@ export class Render {
   skinChromaVideos: ReactElement[] = [];
   skinLevelVideos: ReactElement[] = [];
   allChromas: ReactElement[] = [];
+  chromaSwatches: ReactElement[] = [];
   constructor(data: Skin) {
     this.data = data;
   }
 
   renderSkinChromas() {
+    this.skinChromas = []; // Clear array before populating
     this.data.chromaRenders.map((render, index) => {
       {
         this.skinChromas.push(
@@ -38,6 +40,7 @@ export class Render {
   }
 
   renderBaseChroma() {
+    this.allChromas = []; // Clear array before populating
     this.allChromas.push(
       <div className="flex justify-center items-center h-28 w-36">
         <Image
@@ -55,6 +58,7 @@ export class Render {
   }
 
   renderChromaVideos() {
+    this.skinChromaVideos = []; // Clear array before populating
     this.data.chromaVideos.map((video, index) => {
       if (video !== null) {
         this.skinChromaVideos.push(
@@ -78,6 +82,7 @@ export class Render {
   }
 
   renderLevelVideos() {
+    this.skinLevelVideos = []; // Clear array before populating
     this.data.levelVideos.map((levelVideo, index) => {
       if (levelVideo !== null) {
         this.skinLevelVideos.push(
@@ -98,6 +103,37 @@ export class Render {
       }
     });
     return this.skinLevelVideos;
+  }
+
+  renderChromaSwatches() {
+    this.chromaSwatches = []; // Clear array before populating
+    this.data.chromaSwatches.map((swatch, index) => {
+      if (swatch) {
+        this.chromaSwatches.push(
+          <div
+            key={index}
+            className="w-8 h-8 rounded-full border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+          >
+            <Image
+              className="w-full h-full rounded-full object-cover"
+              src={swatch}
+              width={32}
+              height={32}
+              loading="lazy"
+              alt={""}
+            />
+          </div>
+        );
+      } else {
+        this.chromaSwatches.push(
+          <div
+            key={index}
+            className="w-8 h-8 rounded-full bg-gray-500 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+          />
+        );
+      }
+    });
+    return this.chromaSwatches;
   }
 
   levelLength() {

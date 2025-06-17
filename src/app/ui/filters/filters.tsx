@@ -30,6 +30,35 @@ interface FiltersProps {
   alwaysOpen?: boolean;
 }
 
+interface FilterButtonProps {
+  onClick: () => void;
+  isActive: boolean;
+  children: React.ReactNode;
+  alwaysOpen: boolean;
+}
+
+const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const showActiveEffects = isHovered || isActive;
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden ${
+        alwaysOpen
+          ? `w-full pr-3 py-1 text-left text-sm font-medium`
+          : `justify-center text-sm px-2 h-10 rounded-full flex items-center`
+      } ${isActive ? 'filter-button-active' : ''} ${showActiveEffects ? 'animate-active-state' : ''}`} // Added animate-active-state
+    >
+      <div className={`filter-button-line ${showActiveEffects ? 'filter-button-line-active' : ''}`}></div>
+      <div className={`filter-button-bg ${showActiveEffects ? 'filter-button-bg-active' : ''}`}></div>
+      <p className={`text-left text-sm font-medium relative z-10 ${alwaysOpen ? 'pl-6' : ''}`}>{children}</p>
+    </div>
+  );
+};
+
 export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
   const bundleTypeArray = Object.values(BundleType);
   const [filterClicked, setFilteredClicked] = useState<boolean>(false);
@@ -82,8 +111,8 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     <motion.div
       className={`flex flex-col ${
         alwaysOpen
-          ? "w-full"
-          : "filter-container border borderAccent w-fit px-3 rounded-md"
+          ? "w-full bg-black border-t-2 border-r-2 border-b-2 border-l-0 border-[#ff4654] pt-3 pr-3 pb-3" // Changed border widths
+          : "filter-container border-t-2 border-r-2 border-b-2 border-l-0 borderAccent w-fit px-3 rounded-md" // Changed border widths
       }`}
     >
       {!alwaysOpen && (
@@ -99,7 +128,7 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
             transition: { duration: 0.2 },
           }}
         >
-          <h1 className="text-white text-center py-2">Filters</h1>
+          <h1 className="text-white text-left py-2">Filters</h1>
         </motion.div>
       )}
 
@@ -112,79 +141,58 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
         {alwaysOpen && (
           <>
             {/* View Toggle Section */}
-            <div className="mb-3 pb-2 border-b border-neutral-600">
-              <div className="flex rounded-md overflow-hidden bg-neutral-800">
-                <button
-                  onClick={() => handleViewToggle("skins")}
-                  className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${
-                    currentView === "skins"
-                      ? "bg-[#ff4655] text-white"
-                      : "text-neutral-300 hover:bg-neutral-700"
-                  }`}
-                >
-                  Skins
-                </button>
-                <button
-                  onClick={() => handleViewToggle("bundles")}
-                  className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${
-                    currentView === "bundles"
-                      ? "bg-[#ff4655] text-white"
-                      : "text-neutral-300 hover:bg-neutral-700"
-                  }`}
-                >
-                  Bundles
-                </button>
-              </div>
+            <div className={`flex flex-col gap-1 ${currentView === "skins" ? "mb-3" : ""}`}>
+              <FilterButton
+                onClick={() => handleViewToggle("skins")}
+                isActive={currentView === "skins"}
+                alwaysOpen={true}
+              >
+                Skins
+              </FilterButton>
+              <FilterButton
+                onClick={() => handleViewToggle("bundles")}
+                isActive={currentView === "bundles"}
+                alwaysOpen={true}
+              >
+                Bundles
+              </FilterButton>
             </div>
           </>
         )}
 
-        <div
-          className={`flex ${
-            alwaysOpen
-              ? "flex-col"
-              : "flex-wrap h-fit py-5 px-5 justify-center items-center gap-2"
-          }`}
-        >
+        <div className={`flex ${alwaysOpen ? "flex-col gap-1" : "flex-wrap h-fit py-5 px-5 justify-center items-center gap-2"}`}>
+          {alwaysOpen && currentView === "skins" && (
+            <>
+              <div className="filter-divider"></div>
+              <div className="h-0.5"></div>
+            </>
+          )}
+          
           {currentView === "skins" && filtersList.map((filter, index) => {
             const weaponName = filter.filterName as WeaponType;
             const isLastItem = index === filtersList.length - 1;
+            const hasSpaceAfter = itemsWithSpaceAfter.includes(weaponName);
 
             return (
               <React.Fragment key={filter.filterName}>
-                <div
+                <FilterButton
                   onClick={() => clickHandle(filter.filterName)}
-                  className={`flex items-center hover:cursor-pointer ${
-                    alwaysOpen
-                      ? `w-full px-3 py-1 text-left text-sm hover:bg-neutral-700/50`
-                      : `justify-center text-sm px-2 h-10 rounded-full` // Kept rounded-full for non-alwaysOpen
-                  } textAccent ${
-                    params.has("filter", filter.filterName)
-                      ? "bg-[#ff4655] text-white"
-                      : "" // Removed backgroundAccent
-                  }`}
+                  isActive={params.has("filter", filter.filterName)}
+                  alwaysOpen={alwaysOpen}
                 >
-                  <p className={alwaysOpen ? "" : "text-center"}>{filter.filterName}</p>
-                </div>
+                  {filter.filterName}
+                </FilterButton>
 
-                {alwaysOpen && !isLastItem && (
-                  <div
-                    className={`w-full ${
-                      itemsWithSpaceAfter.includes(weaponName)
-                        ? "h-0.5 bg-neutral-600 my-1" // Thicker divider for categories, changed my-2 to my-1
-                        : "h-px bg-neutral-700 my-1"  // Thinner divider for items, changed my-1 to my-0.5
-                    }`}
-                  ></div>
+                {alwaysOpen && !isLastItem && hasSpaceAfter && (
+                  <>
+                    <div className="h-0.5"></div>
+                    <div className="filter-divider"></div>
+                    <div className="h-0.5"></div>
+                  </>
                 )}
               </React.Fragment>
             );
           })}
-          
-          {currentView === "bundles" && (
-            <div className="w-full text-center text-neutral-400 text-sm py-4">
-              Bundle filters coming soon...
-            </div>
-          )}
         </div>
       </motion.div>
     </motion.div>

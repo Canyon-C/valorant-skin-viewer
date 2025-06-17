@@ -13,12 +13,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
-    
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
     // Use controlled component with state
     const [searchValue, setSearchValue] = React.useState(
       searchParams.get("query") || ""
     );
-    
+
     // Update local state when URL changes (e.g., when navigating from bundle)
     React.useEffect(() => {
       const queryFromUrl = searchParams.get("query") || "";
@@ -46,7 +47,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
       // Trim the search string and check if it's empty
       const trimmedSearch = search.trim();
-      
+
       if (trimmedSearch !== "") {
         newParams.set("query", trimmedSearch);
       } else {
@@ -61,6 +62,27 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       handleSearch(value);
     };
 
+    React.useEffect(() => {
+      const handleUpdateSearch = (event: CustomEvent) => {
+        const query = event.detail.query;
+        if (inputRef.current) {
+          inputRef.current.value = query;
+          handleSearch(query);
+        }
+      };
+
+      window.addEventListener(
+        "updateSearch",
+        handleUpdateSearch as EventListener
+      );
+      return () => {
+        window.removeEventListener(
+          "updateSearch",
+          handleUpdateSearch as EventListener
+        );
+      };
+    }, [handleSearch]);
+
     return (
       <div className="w-full flex justify-center items-center">
         {pathname !== "/" && <ArrowBackSVG />}
@@ -73,7 +95,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             "flex h-10 text-white rounded-md border border-input bg-black px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
-          ref={ref}
+          ref={inputRef}
           {...props}
         />
       </div>
