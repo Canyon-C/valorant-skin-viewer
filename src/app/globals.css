@@ -156,11 +156,15 @@
   top: 50%;
   transform: translateY(-50%);
   width: 2px;
-  height: 22px; /* Increased from 12px */
+  height: 17px; /* Increased from 12px */
   background-color: #6b7280;
   /* Default transition for hover OFF: line is delayed */
   transition: height 0.15s ease 0.075s, background-color 0.15s ease 0.075s;
   z-index: 5;
+}
+
+.filter-button-line-large {
+  height: 24px;
 }
 
 .filter-button-line-active {

@@ -5,19 +5,19 @@ const poppins = Poppins({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const Redirect = () => {
   return (
-    <div className="navContainer py-3 px-5 w-full flex flex-col gap-5">
-      <Link href="./skin">
+    <div className="navContainer py-3 px-5 flex flex-col items-center gap-5">
+      <Link href="/?view=skins">
         <button
           className={`${poppins.className} px-6 py-2 bg-[#ff4655] dark:border-white dark:text-white text-white rounded-lg transform hover:-translate-y-1 transition duration-400`}
         >
-          Skin Viewer
+          Skin & Bundle Viewer
         </button>
       </Link>
-      <Link href="./bundle">
+      <Link href="/featured">
         <button
           className={`${poppins.className} px-3 py-2 bg-[#ff4655] dark:border-white dark:text-white text-white rounded-lg transform hover:-translate-y-1 transition duration-400`}
         >
-          Bundle Viewer
+          Featured Bundle
         </button>
       </Link>
     </div>

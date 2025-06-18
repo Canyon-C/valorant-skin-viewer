@@ -112,10 +112,10 @@ export class Render {
         this.chromaSwatches.push(
           <div
             key={index}
-            className="w-8 h-8 rounded-full border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+            className="w-8 h-8 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
           >
             <Image
-              className="w-full h-full rounded-full object-cover"
+              className="w-full h-full object-contain"
               src={swatch}
               width={32}
               height={32}
@@ -128,7 +128,7 @@ export class Render {
         this.chromaSwatches.push(
           <div
             key={index}
-            className="w-8 h-8 rounded-full bg-gray-500 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+            className="w-8 h-8 bg-gray-500 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
           />
         );
       }

@@ -111,8 +111,8 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     <motion.div
       className={`flex flex-col ${
         alwaysOpen
-          ? "w-full bg-black border-t-2 border-r-2 border-b-2 border-l-0 border-[#ff4654] pt-3 pr-3 pb-3" // Changed border widths
-          : "filter-container border-t-2 border-r-2 border-b-2 border-l-0 borderAccent w-fit px-3 rounded-md" // Changed border widths
+          ? "w-full bg-black pt-3 pr-3 pb-3" // Changed border widths border-t-2 border-r-2 border-b-2 border-l-0 border-[#ff4654]
+          : "filter-container w-fit px-3 rounded-md" // Changed border widths
       }`}
     >
       {!alwaysOpen && (

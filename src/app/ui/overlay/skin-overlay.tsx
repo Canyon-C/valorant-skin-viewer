@@ -1,23 +1,62 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useOverlay } from "@/app/utils/overlay-context";
 import { ApiDataInstance, Render } from "@/app/utils/skin-api-class";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+
+const LevelButton = ({ onClick, isActive, children }: { onClick: () => void; isActive: boolean; children: React.ReactNode }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const showActiveEffects = isHovered || isActive;
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden 
+        w-10 h-10 flex items-center justify-center
+        ${isActive ? 'filter-button-active' : ''} ${showActiveEffects ? 'animate-active-state' : ''}`}
+    >
+      <div className={`filter-button-line filter-button-line-large ${showActiveEffects ? 'filter-button-line-active' : ''}`}></div>
+      <div className={`filter-button-bg ${showActiveEffects ? 'filter-button-bg-active' : ''}`}></div>
+      <p className={`text-center text-lg font-medium relative z-10`}>{children}</p>
+    </div>
+  );
+};
+
+const ChromaButton = ({ onClick, isActive, isDisabled, swatch }: { onClick: () => void; isActive: boolean; isDisabled: boolean; swatch: JSX.Element }) => {
+  const clonedSwatch = React.cloneElement(swatch, {
+    className: `w-full h-full object-contain`
+  });
+
+  return (
+    <div
+      onClick={!isDisabled ? onClick : undefined}
+      className={`relative w-10 h-10 rounded-md overflow-hidden transition-colors duration-200 border-2
+        ${isDisabled 
+          ? 'cursor-not-allowed opacity-50 border-gridDivider' 
+          : `cursor-pointer hover:border-floodRed ${isActive ? 'border-floodRed' : 'border-gridDivider'}`
+        }
+      `}
+    >
+      <div className="relative z-10 w-full h-full">
+        {clonedSwatch}
+      </div>
+    </div>
+  );
+};
 
 export const SkinOverlay = () => {
   const { isOpen, skinUuid, closeOverlay } = useOverlay();
   const [skinData, setSkinData] = useState<Render | null>(null);
   const [currentChroma, setCurrentChroma] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [videoKey, setVideoKey] = useState(0); // Force video re-render
   const [maxLevel, setMaxLevel] = useState(0);
 
   useEffect(() => {
     const fetchSkinData = async () => {
       if (skinUuid && isOpen) {
-        setLoading(true);
         try {
           const dataInstance = new ApiDataInstance(skinUuid);
           await dataInstance.initialize();
@@ -32,8 +71,6 @@ export const SkinOverlay = () => {
           setVideoKey(0);
         } catch (error) {
           console.error("Failed to fetch skin data:", error);
-        } finally {
-          setLoading(false);
         }
       }
     };
@@ -69,16 +106,6 @@ export const SkinOverlay = () => {
 
   if (!isOpen) return null;
 
-  const overlayVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
-
-  const contentVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: { scale: 1, opacity: 1 },
-  };
-
   // Determine which video to show
   const getVideoSource = () => {
     if (!skinData) return null;
@@ -111,136 +138,121 @@ export const SkinOverlay = () => {
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        variants={overlayVariants}
-        initial="hidden"
-        animate="visible"
-        exit="hidden"
-        className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
-        onClick={handleBackdropClick}
+    <div
+      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+      onClick={handleBackdropClick}
+    >
+      <div
+        className="bg-black border-2 border-gridDivider max-w-[85vw] w-full max-h-[95vh] overflow-hidden flex flex-col"
       >
-        <motion.div
-          variants={contentVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          className="bg-black border borderAccent rounded-lg max-w-[80vw] w-full max-h-[95vh] overflow-hidden flex flex-col"
-        >
-
-          {loading ? (
-            <div className="flex justify-center items-center h-96">
-              <p className="text-white">Loading...</p>
-            </div>
-          ) : skinData ? (
-            <div className="p-3 flex-1 flex flex-col">
-              {/* Main content area */}
-              <div className="flex flex-col items-center lg:flex-row lg:items-stretch flex-1">
-                {/* Left side - Current chroma render and controls */}
-                <div className="flex-none w-full lg:w-1/3 flex flex-col items-center">
-                  {/* Title moved above the image container */}
-                  <h2 className="text-white text-xl font-bold mb-3 text-center pt-2">
-                    {skinData.data.displayName}
-                  </h2>
-                  
-                  {/* Skin render wrapper - this div will grow and center its content */}
-                  <div className="flex-grow flex flex-col items-center justify-center mb-4">
-                    <Image
-                      src={skinData.data.chromaRenders[currentChroma]}
-                      alt={skinData.data.displayName}
-                      width={1000}
-                      height={1000}
-                      className="object-contain"
-                    />
-                  </div>
-                  
-                  {/* Controls underneath skin render, now at the bottom of this column */}
-                  <div className="flex gap-6 items-center justify-center py-2"> {/* This will be at the bottom */}
-                    {/* Chroma selector - only show if multiple chromas available */}
-                    {shouldShowChromaSelector() && (
-                      <div className="flex gap-2">
-                        {skinData.renderChromaSwatches().map((swatch, index) => {
-                          const isDisabled = index !== 0 && currentLevel !== maxLevel;
-                          return (
-                            <div
-                              key={index}
-                              onClick={() => !isDisabled && handleChromaChange(index)}
-                              className={`${
-                                isDisabled 
-                                  ? 'cursor-not-allowed opacity-50' 
-                                  : 'cursor-pointer'
-                              } ${
-                                currentChroma === index ? 'ring-2 ring-red-500' : ''
-                              }`}
-                            >
-                              {swatch}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Level selector - only show if multiple levels available */}
-                    {shouldShowLevelSelector() && (
-                      <div className="flex gap-2">
-                        {skinData.data.levelVideos.map((video, index) => {
-                          if (video !== null) {
-                            return (
-                              <button
-                                key={index}
-                                onClick={() => handleLevelChange(index)}
-                                className={`px-4 py-2 rounded border ${
-                                  currentLevel === index
-                                    ? 'bg-red-500 text-white border-red-500'
-                                    : 'bg-transparent text-white border-white hover:bg-white hover:text-black'
-                                }`}
-                              >
-                                {index + 1}
-                              </button>
-                            );
-                          }
-                          return null;
-                        })}
-                      </div>
-                    )}
-                  </div>
+        {skinData ? (
+          <div className="p-3 flex-1 flex flex-col">
+            {/* Main content area */}
+            <div className="flex flex-col items-center lg:flex-row lg:items-stretch flex-1">
+              {/* Left side - Current chroma render and controls */}
+              <div className="flex-none w-full lg:w-1/3 flex flex-col items-center">
+                {/* Title moved above the image container */}
+                <h2 className="text-white text-3xl font-bold text-center min-h-[88px] flex items-center justify-center">
+                  {skinData.data.displayName}
+                </h2>
+                
+                {/* Skin render wrapper - this div will grow and center its content */}
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <Image
+                    src={skinData.data.chromaRenders[currentChroma]}
+                    alt={skinData.data.displayName}
+                    width={1000}
+                    height={1000}
+                    className="object-contain max-w-md"
+                  />
                 </div>
+                
+                {/* Controls underneath skin render */}
+                <div className="flex flex-col gap-4 items-center justify-center py-2 min-h-[112px]">
+                  {/* Level selector - only show if multiple levels available */}
+                  {shouldShowLevelSelector() && (
+                    <div className="flex gap-2">
+                      {skinData.data.levelVideos.map((video, index) => {
+                        if (video !== null) {
+                          return (
+                            <LevelButton
+                              key={index}
+                              onClick={() => handleLevelChange(index)}
+                              isActive={currentLevel === index}
+                            >
+                              {index + 1}
+                            </LevelButton>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  )}
 
-                {/* Right side - Video taking full space */}
-                <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
-                  {/* Aspect ratio container for video player */}
-                  <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
-                    {getVideoSource() ? (
-                      <video
-                        key={videoKey} // Force re-render when video changes
-                        className="w-full h-full object-contain" // Video fills container, content is contained
-                        controls
-                        autoPlay
-                        ref={(el) => {
-                          if (el) {
-                            el.volume = 0.15;
-                          }
-                        }}
-                      >
-                        <source src={getVideoSource()!} type="video/mp4" />
-                      </video>
-                    ) : (
-                      // Placeholder fills container, maintains same aspect ratio
-                      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                        <p className="text-white">No video available</p>
-                      </div>
-                    )}
-                  </div>
+                  {/* Chroma selector - only show if multiple chromas available */}
+                  {shouldShowChromaSelector() && (
+                    <div className="flex gap-2">
+                      {skinData.renderChromaSwatches().map((swatch, index) => {
+                        const isDisabled = index !== 0 && currentLevel !== maxLevel;
+                        return (
+                          <ChromaButton
+                            key={index}
+                            onClick={() => handleChromaChange(index)}
+                            isActive={currentChroma === index}
+                            isDisabled={isDisabled}
+                            swatch={swatch}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right side - Video taking full space */}
+              <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
+                {/* Aspect ratio container for video player */}
+                <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+                  {getVideoSource() ? (
+                    <video
+                      key={videoKey} // Force re-render when video changes
+                      className="w-full h-full object-contain" // Video fills container, content is contained
+                      controls
+                      autoPlay
+                      ref={(el) => {
+                        if (el) {
+                          el.volume = 0.15;
+                        }
+                      }}
+                    >
+                      <source src={getVideoSource()!} type="video/mp4" />
+                    </video>
+                  ) : (
+                    // Placeholder fills container, maintains same aspect ratio
+                    <div className="w-full h-full bg-[#222222] flex items-center justify-center">
+                      <p className="text-white text-xl">No video available</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="flex justify-center items-center h-96">
-              <p className="text-white">Failed to load skin data</p>
+          </div>
+        ) : (
+          <div className="p-3 flex-1 flex flex-col">
+            {/* Skeleton Layout */}
+            <div className="flex flex-col items-center lg:flex-row lg:items-stretch flex-1">
+              <div className="flex-none w-full lg:w-1/3 flex flex-col items-center">
+                <div className="min-h-[88px]" />
+                <div className="flex-1" />
+                <div className="min-h-[112px]" />
+              </div>
+              <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
+                <div className="w-full aspect-video bg-black rounded-lg overflow-hidden" />
+              </div>
             </div>
-          )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

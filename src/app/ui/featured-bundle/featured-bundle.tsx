@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -7,10 +6,10 @@ type FeaturedBundleProps = {
   name: string;
   image: string;
   price?: number;
+  largeButton?: boolean;
 };
 
-export const FeaturedBundle = ({ name, image, price }: FeaturedBundleProps) => {
-  const [isContentHovering, setIsContentHovering] = useState<boolean>(false);
+export const FeaturedBundle = ({ name, image, price, largeButton }: FeaturedBundleProps) => {
   const [isButtonHovering, setIsButtonHovering] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -24,44 +23,34 @@ export const FeaturedBundle = ({ name, image, price }: FeaturedBundleProps) => {
   };
 
   return (
-    <div className="w-full bg-black border-t-2 border-r-0 border-b-2 border-l-2 border-[#ff4654] pt-3 pl-3 pb-3">
-      {/* Header Button */}
-      <div
-        onClick={handleClick}
-        onMouseEnter={() => setIsButtonHovering(true)}
-        onMouseLeave={() => setIsButtonHovering(false)}
-        className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-full pr-3 py-1 text-left text-sm font-medium mb-3 ${isButtonHovering ? 'animate-active-state' : ''}`}
-      >
-        <div className={`filter-button-line ${isButtonHovering ? 'filter-button-line-active' : ''}`}></div>
-        <div className={`filter-button-bg ${isButtonHovering ? 'filter-button-bg-active' : ''}`}></div>
-        <p className="text-left text-sm font-medium relative z-10 pl-6">Featured Bundle</p>
-      </div>
-
-      {/* Bundle Content */}
-      <div
-        onClick={handleClick}
-        onMouseEnter={() => setIsContentHovering(true)}
-        onMouseLeave={() => setIsContentHovering(false)}
-        className="cursor-pointer"
-      >
-        {/* Bundle Image */}
-        <div className="mb-3">
-          <img 
-            src={image} 
-            alt={name}
-            className="w-full rounded" // Changed h-24 to h-48
-          />
-        </div>
-
-        {/* Bundle Name */}
-        <p className="text-white text-sm font-medium mb-2 text-left">{name}</p>
-
-        {/* Bundle Price */}
+    <div className="flex flex-col md:flex-row items-center justify-center gap-8 w-full px-5 md:px-10 py-10">
+      {/* Left side: Info */}
+      <div className="flex flex-col items-center md:items-start gap-2 text-white order-2 md:order-2 text-center md:text-left">
+        <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
         {price && (
-          <p className="text-[#ff4654] text-sm font-semibold text-left">
+          <p className="text-lg md:text-xl text-[#ff4654]">
             {price.toLocaleString()} VP
           </p>
         )}
+        <div
+          onClick={handleClick}
+          onMouseEnter={() => setIsButtonHovering(true)}
+          onMouseLeave={() => setIsButtonHovering(false)}
+          className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-fit text-left font-medium mt-2 ${isButtonHovering ? 'animate-active-state' : ''} ${largeButton ? 'py-2 pr-4 text-base' : 'py-1 pr-3 text-sm'}`}
+        >
+          <div className={`filter-button-line ${isButtonHovering ? 'filter-button-line-active' : ''} ${largeButton ? 'filter-button-line-large' : ''}`}></div>
+          <div className={`filter-button-bg ${isButtonHovering ? 'filter-button-bg-active' : ''}`}></div>
+          <p className={`text-left font-medium relative z-10 ${largeButton ? 'text-lg md:text-xl px-7' : 'text-base px-5'}`}>View in Skin Viewer</p>
+        </div>
+      </div>
+
+      {/* Right side: Image */}
+      <div className="w-full md:w-1/4 order-1 md:order-1">
+        <img 
+          src={image} 
+          alt={name}
+          className="w-full rounded"
+        />
       </div>
     </div>
   );
