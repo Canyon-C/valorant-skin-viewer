@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// --- Component Props ---
 type FeaturedBundleProps = {
   name: string;
   image: string;
@@ -9,8 +10,30 @@ type FeaturedBundleProps = {
   largeButton?: boolean;
 };
 
+// --- Reusable UI Components ---
+const ViewButton = ({ onClick, largeButton }: { onClick: () => void; largeButton?: boolean }) => {
+  const [isHovering, setIsHovering] = useState(false);
+
+  const buttonSizeClasses = largeButton ? 'py-2 pr-4 text-base' : 'py-1 pr-3 text-sm';
+  const textContainerSizeClasses = largeButton ? 'text-lg md:text-xl px-7' : 'text-base px-5';
+  const lineSizeClasses = largeButton ? 'filter-button-line-large' : '';
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-fit text-left font-medium mt-2 ${isHovering ? 'animate-active-state' : ''} ${buttonSizeClasses}`}
+    >
+      <div className={`filter-button-line ${isHovering ? 'filter-button-line-active' : ''} ${lineSizeClasses}`}></div>
+      <div className={`filter-button-bg ${isHovering ? 'filter-button-bg-active' : ''}`}></div>
+      <p className={`text-left font-medium relative z-10 ${textContainerSizeClasses}`}>View in Skin Viewer</p>
+    </div>
+  );
+};
+
+// --- Main Component ---
 export const FeaturedBundle = ({ name, image, price, largeButton }: FeaturedBundleProps) => {
-  const [isButtonHovering, setIsButtonHovering] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -24,33 +47,24 @@ export const FeaturedBundle = ({ name, image, price, largeButton }: FeaturedBund
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-8 w-full px-5 md:px-10 py-10">
-      {/* Left side: Info */}
-      <div className="flex flex-col items-center md:items-start gap-2 text-white order-2 md:order-2 text-center md:text-left">
+      {/* Left side: Image */}
+      <div className="w-full md:w-1/4 order-1">
+        <img 
+          src={image} 
+          alt={name}
+          className="w-full rounded"
+        />
+      </div>
+
+      {/* Right side: Info */}
+      <div className="flex flex-col items-center md:items-start gap-2 text-white order-2 text-center md:text-left">
         <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
         {price && (
           <p className="text-lg md:text-xl text-[#ff4654]">
             {price.toLocaleString()} VP
           </p>
         )}
-        <div
-          onClick={handleClick}
-          onMouseEnter={() => setIsButtonHovering(true)}
-          onMouseLeave={() => setIsButtonHovering(false)}
-          className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-fit text-left font-medium mt-2 ${isButtonHovering ? 'animate-active-state' : ''} ${largeButton ? 'py-2 pr-4 text-base' : 'py-1 pr-3 text-sm'}`}
-        >
-          <div className={`filter-button-line ${isButtonHovering ? 'filter-button-line-active' : ''} ${largeButton ? 'filter-button-line-large' : ''}`}></div>
-          <div className={`filter-button-bg ${isButtonHovering ? 'filter-button-bg-active' : ''}`}></div>
-          <p className={`text-left font-medium relative z-10 ${largeButton ? 'text-lg md:text-xl px-7' : 'text-base px-5'}`}>View in Skin Viewer</p>
-        </div>
-      </div>
-
-      {/* Right side: Image */}
-      <div className="w-full md:w-1/4 order-1 md:order-1">
-        <img 
-          src={image} 
-          alt={name}
-          className="w-full rounded"
-        />
+        <ViewButton onClick={handleClick} largeButton={largeButton} />
       </div>
     </div>
   );

@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
+// --- Button Component ---
+
 const StyledButton = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -19,15 +21,15 @@ const StyledButton = ({ href, children }: { href: string; children: React.ReactN
   );
 };
 
-export const HomeButtons = () => {
-  return (
-    <div className="flex flex-col space-y-4 items-start">
-      <StyledButton href="/?view=skins">
-        Skin Viewer
-      </StyledButton>
-      <StyledButton href="/featured">
-        Featured Bundle
-      </StyledButton>
-    </div>
-  );
-};
+// --- Main Component ---
+
+export const HomeButtons = () => (
+  <div className="flex flex-col space-y-4 items-start">
+    <StyledButton href="/?view=skins">
+      Skin Viewer
+    </StyledButton>
+    <StyledButton href="/featured">
+      Featured Bundle
+    </StyledButton>
+  </div>
+);

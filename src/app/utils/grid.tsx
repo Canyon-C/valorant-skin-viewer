@@ -1,5 +1,12 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from "react";
 
 interface OverlayContextType {
   isOpen: boolean;
@@ -11,21 +18,28 @@ interface OverlayContextType {
 const OverlayContext = createContext<OverlayContextType | null>(null);
 
 export const OverlayProvider = ({ children }: { children: ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [skinUuid, setSkinUuid] = useState<string | null>(null);
 
-  const openOverlay = (uuid: string) => {
+  const openOverlay = useCallback((uuid: string) => {
     setSkinUuid(uuid);
-    setIsOpen(true);
-  };
+  }, []);
 
-  const closeOverlay = () => {
-    setIsOpen(false);
+  const closeOverlay = useCallback(() => {
     setSkinUuid(null);
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      isOpen: skinUuid !== null,
+      skinUuid,
+      openOverlay,
+      closeOverlay,
+    }),
+    [skinUuid, openOverlay, closeOverlay]
+  );
 
   return (
-    <OverlayContext.Provider value={{ isOpen, skinUuid, openOverlay, closeOverlay }}>
+    <OverlayContext.Provider value={value}>
       {children}
     </OverlayContext.Provider>
   );

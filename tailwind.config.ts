@@ -17,14 +17,9 @@ const config = {
       },
     },
     extend: {
-      maxWidth: {
-        "5/6": "53.33rem",
-      },
       colors: {
-        cardBack: "#ffffff1a",
-        gridDivider: "#6b7280", // Added for grid lines and filter dividers
-        floodRed: "#ff4654", // Added for hover flood animation
-        floodRedThick: "#ff4654", // Added for thicker flood animation
+        gridDivider: "#6b7280",
+        floodRed: "#ff4654",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -77,10 +72,6 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "flood-border-in": "flood-corner-to-corner 0.8s ease-in-out forwards",
-        "flood-border-out": "flood-corner-to-corner-reverse 0.4s ease-in-out forwards",
-        "flood-fill-in": "flood-corner-fill 0.8s ease-in-out forwards",
-        "flood-fill-out": "flood-corner-fill-reverse 0.4s ease-in-out forwards",
       },
     },
   },

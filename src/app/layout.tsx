@@ -12,12 +12,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className="dark">
-      <body className={outfit.className}>{children}</body>
+    <html lang="en" className="dark no-scrollbar">
+      <body className={`${outfit.className} bg-black text-foreground`}>
+        {children}
+      </body>
     </html>
   );
 }

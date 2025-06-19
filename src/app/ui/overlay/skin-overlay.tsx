@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useOverlay } from "@/app/utils/overlay-context";
+import { useOverlay } from "@/app/utils/grid";
 import { ApiDataInstance, Render } from "@/app/utils/skin-api-class";
 import Image from "next/image";
+
+// --- Component Definitions ---
 
 const LevelButton = ({ onClick, isActive, children }: { onClick: () => void; isActive: boolean; children: React.ReactNode }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -19,14 +21,14 @@ const LevelButton = ({ onClick, isActive, children }: { onClick: () => void; isA
     >
       <div className={`filter-button-line filter-button-line-large ${showActiveEffects ? 'filter-button-line-active' : ''}`}></div>
       <div className={`filter-button-bg ${showActiveEffects ? 'filter-button-bg-active' : ''}`}></div>
-      <p className={`text-center text-lg font-medium relative z-10`}>{children}</p>
+      <p className={`text-lg font-medium relative z-10`}>{children}</p>
     </div>
   );
 };
 
 const ChromaButton = ({ onClick, isActive, isDisabled, swatch }: { onClick: () => void; isActive: boolean; isDisabled: boolean; swatch: JSX.Element }) => {
   const clonedSwatch = React.cloneElement(swatch, {
-    className: `w-full h-full object-contain`
+    className: `w-full h-full object-contain relative z-10`
   });
 
   return (
@@ -39,12 +41,12 @@ const ChromaButton = ({ onClick, isActive, isDisabled, swatch }: { onClick: () =
         }
       `}
     >
-      <div className="relative z-10 w-full h-full">
-        {clonedSwatch}
-      </div>
+      {clonedSwatch}
     </div>
   );
 };
+
+// --- Main Overlay Component ---
 
 export const SkinOverlay = () => {
   const { isOpen, skinUuid, closeOverlay } = useOverlay();
@@ -136,8 +138,7 @@ export const SkinOverlay = () => {
   const getVideoSource = () => {
     if (!skinData) return null;
     
-    // Check if we're at the highest level and have chroma videos
-    const isHighestLevel = currentLevel === skinData.data.levelVideos.filter(v => v !== null).length - 1;
+    const isHighestLevel = currentLevel === maxLevel;
     const hasChromaVideo = skinData.data.chromaVideos[currentChroma];
     
     if (isHighestLevel && hasChromaVideo) {
@@ -159,8 +160,7 @@ export const SkinOverlay = () => {
   const shouldShowLevelSelector = () => {
     if (!skinData) return false;
     // Show if there are multiple levels available
-    const availableLevels = skinData.data.levelVideos.filter(v => v !== null);
-    return availableLevels.length > 1;
+    return maxLevel > 0;
   };
 
   return (
@@ -239,7 +239,7 @@ export const SkinOverlay = () => {
               <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
                 {/* Aspect ratio container for video player */}
                 {getVideoSource() ? (
-                  <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+                  <div className="w-full aspect-video bg-black overflow-hidden">
                     <video
                       key={videoKey} // Force re-render when video changes
                       className="w-full h-full object-contain" // Video fills container, content is contained
@@ -256,8 +256,8 @@ export const SkinOverlay = () => {
                   </div>
                 ) : (
                   // Placeholder with same sizing as video container
-                  <div className="w-full aspect-video bg-[#222222] rounded-lg overflow-hidden flex items-center justify-center">
-                    <p className="text-white text-center text-lg px-4">No video available</p>
+                  <div className="w-full aspect-video bg-[#222222] overflow-hidden flex items-center justify-center">
+                    <p className="text-white text-lg px-4">No video available</p>
                   </div>
                 )}
               </div>

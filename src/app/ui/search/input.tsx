@@ -4,6 +4,10 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { cn } from "@/lib/utils";
 
+// --- Search Input Component ---
+// A controlled input component with debounced search functionality
+// that updates the URL search parameters.
+
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -12,32 +16,21 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
-    const inputRef = React.useRef<HTMLInputElement>(null);
 
-    // Use controlled component with state
+    // --- State Management ---
+    // Controlled component state for the input value.
     const [searchValue, setSearchValue] = React.useState(
       searchParams.get("query") || ""
     );
 
-    // Update local state when URL changes (e.g., when navigating from bundle)
+    // --- Effects ---
+    // Effect to sync input value from URL search parameters.
+    // This is useful when navigating from a bundle page, which sets the search query.
     React.useEffect(() => {
-      const queryFromUrl = searchParams.get("query") || "";
-      setSearchValue(queryFromUrl);
+      setSearchValue(searchParams.get("query") || "");
     }, [searchParams]);
 
-    const paramsForPlaceholder = new URLSearchParams(searchParams);
-
-    // Get current view mode from URL params
-    const currentView = paramsForPlaceholder.get("view") || "skins";
-
-    // Set placeholder based on current view
-    const getPlaceholder = () => {
-      if (currentView === "bundles") {
-        return "Search bundles...";
-      }
-      return "Search skins...";
-    };
-
+    // Debounced function to update the URL with the search query.
     const handleSearch = useDebouncedCallback((search: string) => {
       // Create a new URLSearchParams instance from the current searchParams string.
       // This ensures that modifications are based on the most up-to-date URL state
@@ -47,7 +40,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       // Trim the search string and check if it's empty
       const trimmedSearch = search.trim();
 
-      if (trimmedSearch !== "") {
+      if (trimmedSearch) {
         newParams.set("query", trimmedSearch);
       } else {
         newParams.delete("query");
@@ -55,19 +48,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       replace(`${pathname}?${newParams.toString()}`);
     }, 300);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setSearchValue(value);
-      handleSearch(value);
-    };
-
+    // Effect to handle search updates from other components via a custom event.
     React.useEffect(() => {
       const handleUpdateSearch = (event: CustomEvent) => {
         const query = event.detail.query;
-        if (inputRef.current) {
-          inputRef.current.value = query;
-          handleSearch(query);
-        }
+        setSearchValue(query);
+        handleSearch(query);
       };
 
       window.addEventListener(
@@ -82,18 +68,35 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       };
     }, [handleSearch]);
 
+    // --- Placeholder Logic ---
+    // Determines the placeholder text based on the current view mode.
+    const getPlaceholder = () => {
+      const currentView = searchParams.get("view") || "skins";
+      return currentView === "bundles"
+        ? "Search bundles..."
+        : "Search skins...";
+    };
+
+    // --- Event Handlers ---
+    // Handler for input changes to update state and trigger debounced search.
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchValue(value);
+      handleSearch(value);
+    };
+
     return (
       <div className="w-full flex items-center gap-2">
         <input
-          onChange={handleInputChange}
-          value={searchValue}
+          ref={ref} // Forward ref to the input element
           type={type}
+          value={searchValue}
+          onChange={handleInputChange}
           placeholder={getPlaceholder()}
           className={cn(
             "flex-grow h-10 text-white rounded-md border border-input bg-black px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
-          ref={inputRef}
           {...props}
         />
       </div>

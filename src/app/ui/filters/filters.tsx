@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { WeaponType, BundleType } from "@/app/utils/api-data-class";
+import { WeaponType } from "@/app/utils/api-data-class";
 import { motion } from "framer-motion";
 
 const orderedWeaponTypes: WeaponType[] = [
@@ -37,6 +37,8 @@ interface FilterButtonProps {
   alwaysOpen: boolean;
 }
 
+// --- Reusable Filter Button Component ---
+
 const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const showActiveEffects = isHovered || isActive;
@@ -59,8 +61,9 @@ const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonP
   );
 };
 
+// --- Main Filters Component ---
+
 export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
-  const bundleTypeArray = Object.values(BundleType);
   const [filterClicked, setFilteredClicked] = useState<boolean>(false);
 
   useEffect(() => {
@@ -79,11 +82,10 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     };
   }, [filterClicked]);
 
-  const filtersList = useMemo(() => {
-    return orderedWeaponTypes.map(
-      (weaponType) => new Filter(weaponType)
-    );
-  }, []);
+  const filtersList = useMemo(
+    () => orderedWeaponTypes.map((weaponType) => ({ filterName: weaponType })),
+    []
+  );
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -93,7 +95,7 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
   // Get current view mode from URL params
   const currentView = params.get("view") || "skins";
 
-  const clickHandle = async (filter: WeaponType | BundleType) => {
+  const clickHandle = async (filter: WeaponType) => {
     if (params.has("filter", filter)) {
       params.delete("filter", filter);
     } else {
@@ -214,11 +216,3 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     </motion.div>
   );
 };
-
-class Filter {
-  filterName: WeaponType | BundleType;
-
-  constructor(name: WeaponType | BundleType) {
-    this.filterName = name;
-  }
-}
