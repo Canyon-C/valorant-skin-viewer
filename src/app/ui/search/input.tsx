@@ -3,7 +3,6 @@ import * as React from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { cn } from "@/lib/utils";
-import { ArrowBackSVG } from "./arrow-back";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -85,7 +84,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full flex items-center gap-2">
-        {pathname !== "/" && <ArrowBackSVG />}
         <input
           onChange={handleInputChange}
           value={searchValue}

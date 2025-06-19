@@ -1,4 +1,3 @@
-import { SkinCard } from "../ui/card-outlines/skinCard";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactElement } from "react";
