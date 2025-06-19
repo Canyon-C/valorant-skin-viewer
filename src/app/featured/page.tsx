@@ -1,5 +1,5 @@
 import { FeaturedBundle } from "../ui/featured-bundle/featured-bundle";
-import { FeaturedBundleItems } from "../ui/bundles/featured-bundle-items";
+import { FeaturedBundleItems } from "../ui/featured-bundle/featured-bundle-items";
 
 export const runtime = "edge";
 
