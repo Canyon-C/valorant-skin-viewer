@@ -84,7 +84,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }, [handleSearch]);
 
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex items-center gap-2">
         {pathname !== "/" && <ArrowBackSVG />}
         <input
           onChange={handleInputChange}
@@ -92,7 +92,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           type={type}
           placeholder={getPlaceholder()}
           className={cn(
-            "flex h-10 text-white rounded-md border border-input bg-black px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex-grow h-10 text-white rounded-md border border-input bg-black px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
           ref={inputRef}

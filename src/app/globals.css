@@ -213,7 +213,7 @@
 .filter-divider {
   width: 100%;
   height: 2px;
-  background-color: theme('colors.gridDivider');
+  background-color: hsl(var(--border));
   margin: 0;
 }
 

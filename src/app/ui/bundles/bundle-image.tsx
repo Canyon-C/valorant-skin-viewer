@@ -37,29 +37,29 @@ export const BundleImages = ({
   };
 
   const textVariants = {
-    initial: { y: "15%" },
-    hoverActive: { y: "-15%" },
+    initial: { y: "5%" },
+    hoverActive: { y: "-5%" },
   };
 
   return (
-    <div className="flex flex-wrap justify-center align-center gap-3 px-5 w-full">
+    <div className="flex flex-wrap justify-center align-center px-3 w-full">
       {displayedImages.map((bundleImage, index) => {
         return (
           <Link
             key={index}
             href={`./skin?query=${displayedNames[index].replace("//", "")}`}
-            className=""
+            className="w-full p-3 md:w-3/4 lg:w-1/2 xl:w-1/2"
           >
             <motion.div
               whileHover="hoverActive"
               variants={hoverVariants}
               initial="initial"
-              className="w-fit flex justify-center h-full relative"
+              className="w-full flex justify-center h-full relative min-h-[400px]"
               onMouseEnter={() => setIsHovering(index)}
               onMouseLeave={() => setIsHovering(null)}
             >
               <div
-                className={`text-2xl text-center z-10 text-white opacity:100 ${
+                className={`text-3xl text-center z-10 text-white opacity:100 ${
                   isHovering === index ? "md:opacity-100" : "md:opacity-0"
                 } transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
               >

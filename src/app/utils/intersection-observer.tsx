@@ -75,7 +75,7 @@ export const LazyRender = () => {
             .map((bundle: any) => (
               <Link
                 key={bundle.uuid}
-                className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:animate-red-outline-hover"
+                className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.floodRed)]"
                 href={`/?view=skins&query=${encodeURIComponent(bundle.name.replace("//", ""))}`}
               >
                 <div className="relative z-10 flex flex-col items-center h-full p-4">
@@ -142,7 +142,7 @@ export const LazyRender = () => {
   };
 
   return (
-    <div className="w-[60%] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5 bg-gridDivider">
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-0.5 bg-[#000000]">
       {displayedSkins}
       {renderPlaceholders()}
       <div ref={bottomRef} />

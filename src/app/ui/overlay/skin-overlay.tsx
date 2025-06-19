@@ -53,25 +53,51 @@ export const SkinOverlay = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [videoKey, setVideoKey] = useState(0); // Force video re-render
   const [maxLevel, setMaxLevel] = useState(0);
+  const [isContentVisible, setIsContentVisible] = useState(false);
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeOverlay();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, closeOverlay]);
+
+  useEffect(() => {
+    // Immediately clear skin data and hide content to prepare for animation.
+    setSkinData(null);
+    setIsContentVisible(false);
+
+    if (!skinUuid || !isOpen) {
+      return;
+    }
+
     const fetchSkinData = async () => {
-      if (skinUuid && isOpen) {
-        try {
-          const dataInstance = new ApiDataInstance(skinUuid);
-          await dataInstance.initialize();
-          setSkinData(dataInstance.data);
-          
-          // Calculate max level and set as default
-          const availableLevels = dataInstance.data.data.levelVideos.filter(v => v !== null);
-          const highestLevel = availableLevels.length - 1;
-          setMaxLevel(highestLevel);
-          setCurrentLevel(highestLevel); // Set highest level as default
-          setCurrentChroma(0);
-          setVideoKey(0);
-        } catch (error) {
-          console.error("Failed to fetch skin data:", error);
-        }
+      try {
+        const dataInstance = new ApiDataInstance(skinUuid);
+        await dataInstance.initialize();
+        setSkinData(dataInstance.data);
+        
+        // Calculate max level and set as default
+        const availableLevels = dataInstance.data.data.levelVideos.filter(v => v !== null);
+        const highestLevel = availableLevels.length - 1;
+        setMaxLevel(highestLevel);
+        setCurrentLevel(highestLevel); // Set highest level as default
+        setCurrentChroma(0);
+        setVideoKey(0);
+
+        // Allow a moment for the content to be ready before fading in
+        setTimeout(() => setIsContentVisible(true), 50);
+      } catch (error) {
+        console.error("Failed to fetch skin data:", error);
       }
     };
 
@@ -139,11 +165,11 @@ export const SkinOverlay = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4"
       onClick={handleBackdropClick}
     >
       <div
-        className="bg-black border-2 border-gridDivider max-w-[85vw] w-full max-h-[95vh] overflow-hidden flex flex-col"
+        className={`bg-black border-2 border-gridDivider max-w-full sm:max-w-[85vw] w-full max-h-full sm:max-h-[95vh] overflow-hidden flex flex-col transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}
       >
         {skinData ? (
           <div className="p-3 flex-1 flex flex-col">
@@ -152,7 +178,7 @@ export const SkinOverlay = () => {
               {/* Left side - Current chroma render and controls */}
               <div className="flex-none w-full lg:w-1/3 flex flex-col items-center">
                 {/* Title moved above the image container */}
-                <h2 className="text-white text-3xl font-bold text-center min-h-[88px] flex items-center justify-center">
+                <h2 className="text-white text-2xl lg:text-3xl font-bold text-center min-h-[64px] lg:min-h-[88px] flex items-center justify-center">
                   {skinData.data.displayName}
                 </h2>
                 
@@ -163,12 +189,12 @@ export const SkinOverlay = () => {
                     alt={skinData.data.displayName}
                     width={1000}
                     height={1000}
-                    className="object-contain max-w-md"
+                    className="object-contain max-w-xs sm:max-w-sm md:max-w-md"
                   />
                 </div>
                 
                 {/* Controls underneath skin render */}
-                <div className="flex flex-col gap-4 items-center justify-center py-2 min-h-[112px]">
+                <div className="flex flex-col gap-4 items-center justify-center py-2 min-h-[80px] lg:min-h-[112px]">
                   {/* Level selector - only show if multiple levels available */}
                   {shouldShowLevelSelector() && (
                     <div className="flex gap-2">
@@ -212,8 +238,8 @@ export const SkinOverlay = () => {
               {/* Right side - Video taking full space */}
               <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
                 {/* Aspect ratio container for video player */}
-                <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
-                  {getVideoSource() ? (
+                {getVideoSource() ? (
+                  <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
                     <video
                       key={videoKey} // Force re-render when video changes
                       className="w-full h-full object-contain" // Video fills container, content is contained
@@ -227,13 +253,13 @@ export const SkinOverlay = () => {
                     >
                       <source src={getVideoSource()!} type="video/mp4" />
                     </video>
-                  ) : (
-                    // Placeholder fills container, maintains same aspect ratio
-                    <div className="w-full h-full bg-[#222222] flex items-center justify-center">
-                      <p className="text-white text-xl">No video available</p>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  // Placeholder with same sizing as video container
+                  <div className="w-full aspect-video bg-[#222222] rounded-lg overflow-hidden flex items-center justify-center">
+                    <p className="text-white text-center text-lg px-4">No video available</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -242,9 +268,11 @@ export const SkinOverlay = () => {
             {/* Skeleton Layout */}
             <div className="flex flex-col items-center lg:flex-row lg:items-stretch flex-1">
               <div className="flex-none w-full lg:w-1/3 flex flex-col items-center">
-                <div className="min-h-[88px]" />
-                <div className="flex-1" />
-                <div className="min-h-[112px]" />
+                <div className="min-h-[64px] lg:min-h-[88px]" />
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="w-full max-w-xs sm:max-w-sm md:max-w-md aspect-square" />
+                </div>
+                <div className="min-h-[80px] lg:min-h-[112px]" />
               </div>
               <div className="flex-1 lg:flex-[2] flex items-center justify-center pl-0 lg:pl-4">
                 <div className="w-full aspect-video bg-black rounded-lg overflow-hidden" />

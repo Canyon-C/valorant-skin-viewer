@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { WeaponType, BundleType } from "@/app/utils/api-data-class";
 import { motion } from "framer-motion";
@@ -62,6 +62,22 @@ const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonP
 export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
   const bundleTypeArray = Object.values(BundleType);
   const [filterClicked, setFilteredClicked] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setFilteredClicked(false);
+      }
+    };
+
+    if (filterClicked) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filterClicked]);
 
   const filtersList = useMemo(() => {
     return orderedWeaponTypes.map(

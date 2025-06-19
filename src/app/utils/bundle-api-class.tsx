@@ -83,9 +83,9 @@ export class RenderAllBundles {
             key={index}
             alt={bundle.name}
             src={bundle.image}
-            width={500}
-            height={300}
-            className="h-full"
+            width={1000}
+            height={1000}
+            className="h-full w-full object-cover"
           ></Image>
         );
       });
@@ -142,18 +142,18 @@ export class RenderAllBundles {
           const itemImage = bundleItem.image ? (
             <img
               src={bundleItem.image}
-              className="w-full h-48 object-contain mb-2"
+              className="w-full h-64 object-contain mb-2"
             />
           ) : null;
           this.featuredBundleItems.push(
             <div
               key={bundleItem.uuid}
-              className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/5"
+              className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/4"
             >
               {itemImage ? (
                 itemImage
               ) : (
-                <p className="text-white w-full h-48 mb-2 flex justify-center items-center">
+                <p className="text-white w-full h-64 mb-2 flex justify-center items-center">
                   Image not available
                 </p>
               )}

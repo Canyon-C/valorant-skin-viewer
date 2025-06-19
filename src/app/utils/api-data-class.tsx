@@ -283,11 +283,11 @@ export class RenderData {
       this.elements.push(
         <div
           key={skin.uuid}
-          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:animate-red-outline-hover"
+          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.floodRed)]"
           onClick={() => onSkinClick?.(skin.uuid)}
         >
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center h-full p-4">
+          <div className="relative z-10 flex flex-col items-center h-full p-2">
             <Image
               className="object-contain w-full h-32"
               src={skin.fullRender}
@@ -296,7 +296,7 @@ export class RenderData {
               height={100}
               loading="lazy"
             />
-            <p className="text-white text-center mt-3 text-sm font-medium truncate w-full">
+            <p className="text-white text-center mt-1 text-sm font-medium truncate w-full">
               {skin.displayName}
             </p>
           </div>
