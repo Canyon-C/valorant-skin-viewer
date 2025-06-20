@@ -8,6 +8,7 @@ import { OverlayProvider } from "./utils/grid";
 import { SkinOverlay } from "./ui/overlay/skin-overlay";
 import localFont from "next/font/local";
 import { HomeButtons } from "./ui/home/home-buttons";
+import { motion, AnimatePresence } from "framer-motion";
 
 const valorantFont = localFont({ src: "../font/Valorant Font.ttf" });
 
@@ -55,20 +56,30 @@ const MobileMenu = ({
   onClose: () => void;
   children: ReactNode;
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="lg:hidden fixed inset-0 z-40 bg-black/80"
-      onClick={onClose}
-    >
-      <div
-        className="fixed z-50 bg-black p-4 overflow-y-auto no-scrollbar w-64 h-full"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children}
-      </div>
-    </div>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="lg:hidden fixed inset-0 z-40 bg-black/80"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
+          <motion.div
+            className="fixed z-50 bg-black p-4 overflow-y-auto no-scrollbar w-64 h-full"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
+          >
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

@@ -3,25 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useOverlay } from "@/app/utils/grid";
 import { ApiDataInstance, Render } from "@/app/utils/skin-api-class";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // --- Component Definitions ---
 
 const LevelButton = ({ onClick, isActive, children }: { onClick: () => void; isActive: boolean; children: React.ReactNode }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const showActiveEffects = isHovered || isActive;
-
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden 
         w-10 h-10 flex items-center justify-center
-        ${isActive ? 'filter-button-active' : ''} ${showActiveEffects ? 'animate-active-state' : ''}`}
+        ${isActive ? 'filter-button-active' : ''}`}
     >
-      <div className={`filter-button-line filter-button-line-large ${showActiveEffects ? 'filter-button-line-active' : ''}`}></div>
-      <div className={`filter-button-bg ${showActiveEffects ? 'filter-button-bg-active' : ''}`}></div>
-      <p className={`text-lg font-medium relative z-10`}>{children}</p>
+      <div className="filter-button-line filter-button-line-large"></div>
+      <div className="filter-button-bg"></div>
+      <p className="text-lg font-medium relative z-10">{children}</p>
     </div>
   );
 };
@@ -36,8 +32,8 @@ const ChromaButton = ({ onClick, isActive, isDisabled, swatch }: { onClick: () =
       onClick={!isDisabled ? onClick : undefined}
       className={`relative w-10 h-10 rounded-md overflow-hidden transition-colors duration-200 border-2
         ${isDisabled 
-          ? 'cursor-not-allowed opacity-50 border-gridDivider' 
-          : `cursor-pointer hover:border-floodRed ${isActive ? 'border-floodRed' : 'border-gridDivider'}`
+          ? 'cursor-not-allowed opacity-50 border-divider' 
+          : `cursor-pointer hover:border-valRed ${isActive ? 'border-valRed' : 'border-divider'}`
         }
       `}
     >
@@ -49,13 +45,39 @@ const ChromaButton = ({ onClick, isActive, isDisabled, swatch }: { onClick: () =
 // --- Main Overlay Component ---
 
 export const SkinOverlay = () => {
-  const { isOpen, skinUuid, closeOverlay } = useOverlay();
+  const { isOpen, skinUuid, closeOverlay, openOverlay } = useOverlay();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [skinData, setSkinData] = useState<Render | null>(null);
   const [currentChroma, setCurrentChroma] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [videoKey, setVideoKey] = useState(0); // Force video re-render
   const [maxLevel, setMaxLevel] = useState(0);
   const [isContentVisible, setIsContentVisible] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  useEffect(() => {
+    // Initialize from URL search params on component mount
+    const skinFromUrl = searchParams.get('skin');
+    if (openOverlay && skinFromUrl && !isOpen) {
+      openOverlay(skinFromUrl);
+    }
+    setHasInitialized(true);
+  }, [openOverlay]);
+
+  useEffect(() => {
+    if (!isOpen && hasInitialized) {
+      const newParams = new URLSearchParams(searchParams);
+      if (newParams.has('skin')) {
+        newParams.delete('skin');
+        newParams.delete('level');
+        newParams.delete('chroma');
+        const newPath = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
+        router.replace(newPath, { scroll: false });
+      }
+    }
+  }, [isOpen, router, pathname, searchParams, hasInitialized]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -88,12 +110,30 @@ export const SkinOverlay = () => {
         await dataInstance.initialize();
         setSkinData(dataInstance.data);
         
-        // Calculate max level and set as default
+        // Calculate max level
         const availableLevels = dataInstance.data.data.levelVideos.filter(v => v !== null);
         const highestLevel = availableLevels.length - 1;
         setMaxLevel(highestLevel);
-        setCurrentLevel(highestLevel); // Set highest level as default
-        setCurrentChroma(0);
+
+        // Read level and chroma from URL search params
+        const levelFromUrl = searchParams.get('level');
+        const chromaFromUrl = searchParams.get('chroma');
+
+        const defaultLevel = highestLevel;
+        const defaultChroma = 0;
+
+        const initialLevel = levelFromUrl ? parseInt(levelFromUrl, 10) : defaultLevel;
+        const initialChroma = chromaFromUrl ? parseInt(chromaFromUrl, 10) : defaultChroma;
+
+        // Validate params
+        const validLevel = (initialLevel >= 0 && initialLevel <= highestLevel) ? initialLevel : defaultLevel;
+        const validChroma = (initialChroma >= 0 && initialChroma < dataInstance.data.data.chromaRenders.length) ? initialChroma : defaultChroma;
+
+        // Non-default chromas are only available at the highest level
+        const finalChroma = (validLevel === highestLevel || validChroma === 0) ? validChroma : defaultChroma;
+
+        setCurrentLevel(validLevel);
+        setCurrentChroma(finalChroma);
         setVideoKey(0);
 
         // Allow a moment for the content to be ready before fading in
@@ -104,7 +144,32 @@ export const SkinOverlay = () => {
     };
 
     fetchSkinData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skinUuid, isOpen]);
+
+  // Update URL when chroma or level changes
+  useEffect(() => {
+    if (isOpen && skinUuid) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('skin', skinUuid);
+
+      if (currentLevel !== maxLevel) {
+        newParams.set('level', currentLevel.toString());
+      } else {
+        newParams.delete('level');
+      }
+
+      if (currentChroma !== 0) {
+        newParams.set('chroma', currentChroma.toString());
+      } else {
+        newParams.delete('chroma');
+      }
+
+      if (newParams.toString() !== searchParams.toString()) {
+        router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+      }
+    }
+  }, [isOpen, skinUuid, currentLevel, currentChroma, maxLevel, router, pathname, searchParams]);
 
   // Update video key when chroma or level changes to force re-render
   useEffect(() => {
@@ -169,7 +234,7 @@ export const SkinOverlay = () => {
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-black border-2 border-gridDivider max-w-full sm:max-w-[85vw] w-full max-h-full sm:max-h-[95vh] overflow-hidden flex flex-col transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}
+        className={`bg-black border-2 border-divider max-w-full sm:max-w-[85vw] w-full max-h-full sm:max-h-[95vh] overflow-hidden flex flex-col transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}
       >
         {skinData ? (
           <div className="p-3 flex-1 flex flex-col">
@@ -189,7 +254,7 @@ export const SkinOverlay = () => {
                     alt={skinData.data.displayName}
                     width={1000}
                     height={1000}
-                    className="object-contain max-w-xs sm:max-w-sm md:max-w-md"
+                    className="object-contain w-full"
                   />
                 </div>
                 

@@ -12,8 +12,6 @@ type FeaturedBundleProps = {
 
 // --- Reusable UI Components ---
 const ViewButton = ({ onClick, largeButton }: { onClick: () => void; largeButton?: boolean }) => {
-  const [isHovering, setIsHovering] = useState(false);
-
   const buttonSizeClasses = largeButton ? 'py-2 pr-4 text-base' : 'py-1 pr-3 text-sm';
   const textContainerSizeClasses = largeButton ? 'text-lg md:text-xl px-7' : 'text-base px-5';
   const lineSizeClasses = largeButton ? 'filter-button-line-large' : '';
@@ -21,12 +19,10 @@ const ViewButton = ({ onClick, largeButton }: { onClick: () => void; largeButton
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-fit text-left font-medium mt-2 ${isHovering ? 'animate-active-state' : ''} ${buttonSizeClasses}`}
+      className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden w-fit text-left font-medium mt-2 ${buttonSizeClasses}`}
     >
-      <div className={`filter-button-line ${isHovering ? 'filter-button-line-active' : ''} ${lineSizeClasses}`}></div>
-      <div className={`filter-button-bg ${isHovering ? 'filter-button-bg-active' : ''}`}></div>
+      <div className={`filter-button-line ${lineSizeClasses}`}></div>
+      <div className="filter-button-bg"></div>
       <p className={`text-left font-medium relative z-10 ${textContainerSizeClasses}`}>View in Skin Viewer</p>
     </div>
   );

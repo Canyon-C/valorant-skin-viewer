@@ -92,12 +92,6 @@
   height: 24px;
 }
 
-/* Active state for the line */
-.filter-button-line-active {
-  height: 100%;
-  background-color: #ff4654;
-}
-
 /* The expanding background of the button */
 .filter-button-bg {
   position: absolute;
@@ -111,19 +105,19 @@
   z-index: 1;
 }
 
-/* Active state for the background */
-.filter-button-bg-active {
-  width: calc(100% - 2px);
-}
-
 /* Overrides for hover-on animation sequence */
-.animate-active-state .filter-button-line {
-  /* Line animation is immediate on hover */
+.filter-button:hover .filter-button-line,
+.filter-button.filter-button-active .filter-button-line {
+  height: 100%;
+  background-color: #ff4654;
+  /* Line animation is immediate on hover/active */
   transition-delay: 0s, 0s;
 }
 
-.animate-active-state .filter-button-bg {
-  /* Background animation is delayed on hover */
+.filter-button:hover .filter-button-bg,
+.filter-button.filter-button-active .filter-button-bg {
+  width: calc(100% - 2px);
+  /* Background animation is delayed on hover/active */
   transition-delay: 0.075s;
 }
 

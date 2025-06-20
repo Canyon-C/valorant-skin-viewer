@@ -96,19 +96,19 @@ export const LazyRender = () => {
             (bundle: ValorantBundle) => (
               <Link
                 key={bundle.uuid}
-                className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.floodRed)]"
+                className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.valRed)]"
                 href={`/?view=skins&query=${encodeURIComponent(
                   bundle.displayName.replace("//", "")
                 )}`}
               >
-                <div className="relative z-10 flex flex-col items-center h-full p-4">
+                <div className="relative z-10 flex flex-col items-center h-full px-1 pt-0 pb-4">
                   <img
                     alt={bundle.displayName}
                     src={bundle.displayIcon}
-                    className="object-contain w-full h-32"
+                    className="object-contain w-full h-36"
                   />
                   <p
-                    className="text-white text-center mt-3 text-sm font-medium truncate w-full"
+                    className="text-white text-center mt-3 text-sm font-medium truncate w-full px-4"
                     title={bundle.displayName}
                   >
                     {bundle.displayName}

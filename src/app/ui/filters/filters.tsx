@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { WeaponType } from "@/app/utils/api-data-class";
 import { motion } from "framer-motion";
+
+// --- Constants and Types ---
 
 const orderedWeaponTypes: WeaponType[] = [
   WeaponType.Melee,
@@ -26,6 +28,17 @@ const orderedWeaponTypes: WeaponType[] = [
   WeaponType.Judge,
 ];
 
+const filtersList = orderedWeaponTypes.map((weaponType) => ({ filterName: weaponType }));
+
+const itemsWithSpaceAfter: WeaponType[] = [
+  WeaponType.Melee,
+  WeaponType.Bulldog,
+  WeaponType.Spectre,
+  WeaponType.Sheriff,
+  WeaponType.Operator,
+  WeaponType.Odin,
+];
+
 interface FiltersProps {
   alwaysOpen?: boolean;
 }
@@ -37,34 +50,58 @@ interface FilterButtonProps {
   alwaysOpen: boolean;
 }
 
-// --- Reusable Filter Button Component ---
+// --- Reusable Filter Components ---
 
 const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const showActiveEffects = isHovered || isActive;
-
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={`filter-button hover:cursor-pointer transition-all duration-200 text-white relative overflow-hidden ${
         alwaysOpen
           ? `w-full pr-3 py-1 text-left text-sm font-medium`
           : `justify-center text-sm px-2 h-10 rounded-full flex items-center`
-      } ${isActive ? 'filter-button-active' : ''} ${showActiveEffects ? 'animate-active-state' : ''}`} // Added animate-active-state
+      } ${isActive ? 'filter-button-active' : ''}`}
     >
-      <div className={`filter-button-line ${showActiveEffects ? 'filter-button-line-active' : ''}`}></div>
-      <div className={`filter-button-bg ${showActiveEffects ? 'filter-button-bg-active' : ''}`}></div>
+      <div className="filter-button-line"></div>
+      <div className="filter-button-bg"></div>
       <p className={`text-left text-sm font-medium relative z-10 ${alwaysOpen ? 'pl-6' : ''}`}>{children}</p>
     </div>
   );
 };
 
+const Divider = () => (
+  <>
+    <div className="h-0.5"></div>
+    <div className="filter-divider"></div>
+    <div className="h-0.5"></div>
+  </>
+);
+
+const ViewToggleButtons = ({
+  currentView,
+  onToggle,
+}: {
+  currentView: string;
+  onToggle: (view: "skins" | "bundles") => void;
+}) => (
+  <div className={`flex flex-col gap-1 ${currentView === "skins" ? "mb-3" : ""}`}>
+    <FilterButton onClick={() => onToggle("skins")} isActive={currentView === "skins"} alwaysOpen={true}>
+      Skins
+    </FilterButton>
+    <FilterButton onClick={() => onToggle("bundles")} isActive={currentView === "bundles"} alwaysOpen={true}>
+      Bundles
+    </FilterButton>
+  </div>
+);
+
 // --- Main Filters Component ---
 
 export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
   const [filterClicked, setFilteredClicked] = useState<boolean>(false);
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -82,33 +119,29 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     };
   }, [filterClicked]);
 
-  const filtersList = useMemo(
-    () => orderedWeaponTypes.map((weaponType) => ({ filterName: weaponType })),
-    []
-  );
-
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
-
-  // Get current view mode from URL params
   const currentView = params.get("view") || "skins";
+  const activeFilters = params.getAll("filter");
 
-  const clickHandle = async (filter: WeaponType) => {
-    if (params.has("filter", filter)) {
-      params.delete("filter", filter);
+  const clickHandle = (filter: WeaponType) => {
+    const newParams = new URLSearchParams(searchParams);
+    const allFilters = newParams.getAll("filter");
+
+    if (allFilters.includes(filter)) {
+      const newFilters = allFilters.filter((f) => f !== filter);
+      newParams.delete("filter");
+      newFilters.forEach((f) => newParams.append("filter", f));
     } else {
-      params.append("filter", filter);
+      newParams.append("filter", filter);
     }
-    replace(`${pathname}?${params.toString()}`, { scroll: false });
+    replace(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
   const handleViewToggle = (view: "skins" | "bundles") => {
-    params.set("view", view);
-    // Clear existing filters when switching views
-    params.delete("filter");
-    replace(`${pathname}?${params.toString()}`, { scroll: false });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("view", view);
+    newParams.delete("filter");
+    replace(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
   const dropdownVariants = {
@@ -116,21 +149,12 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
     active: { height: "auto", overflow: "hidden" },
   };
 
-  const itemsWithSpaceAfter: WeaponType[] = [
-    WeaponType.Melee,
-    WeaponType.Bulldog,
-    WeaponType.Spectre,
-    WeaponType.Sheriff,
-    WeaponType.Operator,
-    WeaponType.Odin,
-  ];
-
   return (
     <motion.div
       className={`flex flex-col ${
         alwaysOpen
-          ? "w-full bg-black pt-3 pr-3 pb-3" // Changed border widths border-t-2 border-r-2 border-b-2 border-l-0 border-[#ff4654]
-          : "filter-container w-fit px-3 rounded-md" // Changed border widths
+          ? "w-full bg-black pt-3 pr-3 pb-3"
+          : "filter-container w-fit px-3 rounded-md"
       }`}
     >
       {!alwaysOpen && (
@@ -156,27 +180,7 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
         animate={alwaysOpen ? "active" : filterClicked ? "active" : "initial"}
         className={`w-full ${alwaysOpen ? "" : "filter-dropdown"}`}
       >
-        {alwaysOpen && (
-          <>
-            {/* View Toggle Section */}
-            <div className={`flex flex-col gap-1 ${currentView === "skins" ? "mb-3" : ""}`}>
-              <FilterButton
-                onClick={() => handleViewToggle("skins")}
-                isActive={currentView === "skins"}
-                alwaysOpen={true}
-              >
-                Skins
-              </FilterButton>
-              <FilterButton
-                onClick={() => handleViewToggle("bundles")}
-                isActive={currentView === "bundles"}
-                alwaysOpen={true}
-              >
-                Bundles
-              </FilterButton>
-            </div>
-          </>
-        )}
+        {alwaysOpen && <ViewToggleButtons currentView={currentView} onToggle={handleViewToggle} />}
 
         <div className={`flex ${alwaysOpen ? "flex-col gap-1" : "flex-wrap h-fit py-5 px-5 justify-center items-center gap-2"}`}>
           {alwaysOpen && currentView === "skins" && (
@@ -195,19 +199,13 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
               <React.Fragment key={filter.filterName}>
                 <FilterButton
                   onClick={() => clickHandle(filter.filterName)}
-                  isActive={params.has("filter", filter.filterName)}
+                  isActive={activeFilters.includes(filter.filterName)}
                   alwaysOpen={alwaysOpen}
                 >
                   {filter.filterName}
                 </FilterButton>
 
-                {alwaysOpen && !isLastItem && hasSpaceAfter && (
-                  <>
-                    <div className="h-0.5"></div>
-                    <div className="filter-divider"></div>
-                    <div className="h-0.5"></div>
-                  </>
-                )}
+                {alwaysOpen && !isLastItem && hasSpaceAfter && <Divider />}
               </React.Fragment>
             );
           })}

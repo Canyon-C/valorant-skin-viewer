@@ -259,7 +259,7 @@ export class RenderData {
       .map((skin) => (
         <div
           key={skin.uuid}
-          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.floodRed)]"
+          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.valRed)]"
           onClick={() => onSkinClick?.(skin.uuid)}
         >
           {/* Content */}
