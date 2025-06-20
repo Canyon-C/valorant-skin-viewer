@@ -6,40 +6,35 @@ const DEFAULT_VIDEO_VOLUME = 0.15;
 
 export class Render {
   data: Skin;
-  skinChromas: ReactElement[] = [];
-  skinChromaVideos: ReactElement[] = [];
-  skinLevelVideos: ReactElement[] = [];
-  allChromas: ReactElement[] = [];
+
   constructor(data: Skin) {
     this.data = data;
   }
 
   renderSkinChromas() {
-    this.data.chromaRenders.map((render, index) => {
-      {
-        this.skinChromas.push(
-          <div
-            key={index}
-            className="object-contain flex justify-center items-center h-28 w-36"
-          >
-            <Image
-              className="object-contain"
-              src={render}
-              width={512}
-              height={128}
-              loading="lazy"
-              alt={""}
-            ></Image>
-          </div>
-        );
-      }
-    });
-    return this.skinChromas;
+    return this.data.chromaRenders.map((render, index) => (
+      <div
+        key={index}
+        className="object-contain flex justify-center items-center h-28 w-36"
+      >
+        <Image
+          className="object-contain"
+          src={render}
+          width={512}
+          height={128}
+          loading="lazy"
+          alt={""}
+        ></Image>
+      </div>
+    ));
   }
 
   renderBaseChroma() {
-    this.allChromas.push(
-      <div className="flex justify-center items-center h-28 w-36">
+    return [
+      <div
+        key="base-chroma"
+        className="flex justify-center items-center h-28 w-36"
+      >
         <Image
           className="object-contain"
           src={this.data.chromaRenders[0]}
@@ -48,16 +43,15 @@ export class Render {
           loading="lazy"
           alt={""}
         ></Image>
-      </div>
-    );
-
-    return this.allChromas;
+      </div>,
+    ];
   }
 
   renderChromaVideos() {
-    this.data.chromaVideos.map((video, index) => {
-      if (video !== null) {
-        this.skinChromaVideos.push(
+    return this.data.chromaVideos
+      .map((video, index) => {
+        if (video === null) return null;
+        return (
           <video
             className="displayborder-2 rounded-lg object-contain volume"
             key={index}
@@ -69,18 +63,18 @@ export class Render {
               }
             }}
           >
-            <source src={`${video}`} type="video/mp4"></source>
+            <source src={video} type="video/mp4"></source>
           </video>
         );
-      }
-    });
-    return this.skinChromaVideos;
+      })
+      .filter(Boolean);
   }
 
   renderLevelVideos() {
-    this.data.levelVideos.map((levelVideo, index) => {
-      if (levelVideo !== null) {
-        this.skinLevelVideos.push(
+    return this.data.levelVideos
+      .map((levelVideo, index) => {
+        if (levelVideo === null) return null;
+        return (
           <video
             key={index}
             className="w-full h-full rounded-lg object-contain"
@@ -92,40 +86,53 @@ export class Render {
               }
             }}
           >
-            <source src={`${levelVideo}`} type="video/mp4"></source>
+            <source src={levelVideo} type="video/mp4"></source>
           </video>
         );
-      }
-    });
-    return this.skinLevelVideos;
+      })
+      .filter(Boolean);
   }
 
-  levelLength() {
-    const levelIndex: JSX.Element[] = [];
+  renderChromaSwatches() {
+    return this.data.chromaSwatches.map((swatch, index) =>
+      swatch ? (
+        <div
+          key={index}
+          className="w-8 h-8 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+        >
+          <Image
+            className="w-full h-full object-contain"
+            src={swatch}
+            width={32}
+            height={32}
+            loading="lazy"
+            alt={""}
+          />
+        </div>
+      ) : (
+        <div
+          key={index}
+          className="w-8 h-8 bg-gray-500 border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+        />
+      )
+    );
+  }
 
-    this.data.levelVideos.map((level, index) => {
-      if (level !== null) {
-        levelIndex.push(
+  renderLevelSelectors() {
+    return this.data.levelVideos
+      .map((level, index) => {
+        if (level === null) return null;
+        return (
           <button key={index} className="py-1 md:py-3">
             {index + 1}
           </button>
         );
-      }
-    });
-    return levelIndex;
+      })
+      .filter(Boolean);
   }
 
-  chromaLength() {
-    const chromaLength: JSX.Element[] = [];
-
-    this.data.chromaVideos.map((level, index) => {
-      chromaLength.push(
-        <button key={index} className="py-1 md:py-3">
-          {index}
-        </button>
-      );
-    });
-    return chromaLength.length;
+  get chromaLength() {
+    return this.data.chromaVideos.length;
   }
 }
 
@@ -149,7 +156,7 @@ export class SkinApi {
 }
 
 export class ApiDataInstance {
-  data: Render = {} as Render;
+  data!: Render;
   apiData: SkinApi;
 
   constructor(uuid: string) {

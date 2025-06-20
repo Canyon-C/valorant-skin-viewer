@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
-import os from "node:os";
-import GitHubBadge from "./ui/github-badge";
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"], weight: ['400'] });
 
 export const metadata: Metadata = {
   title: "Valorant Skin Viewer",
@@ -14,14 +12,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-black`}>
+    <html lang="en" className="dark no-scrollbar">
+      <body className={`${outfit.className} bg-black text-foreground`}>
         {children}
-        <GitHubBadge />
       </body>
     </html>
   );
