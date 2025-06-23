@@ -58,7 +58,7 @@ const call = async (): Promise<ApiResponse | null> => {
       {
         method: "GET",
         headers: {
-          Authorization: process.env.API_KEY as string,
+          Authorization: process.env.API_KEY_ENV as string,
         },
         cache: "no-store",
       }
