@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- Base Styles & ShadCN Theme --- */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -47,53 +48,97 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    overflow: hidden; /* Prevent main page scroll */
+  }
+
+  html,
+  body,
+  #__next {
+    height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    margin: 0;
   }
 }
 
-.background {
-  background: linear-gradient(to right, #d7d2cc 0%, #304352 100%);
+/* --- Filter Button Animation --- */
+.filter-button {
+  position: relative;
 }
 
-.borderAccent {
-  --tw-bg-opacity: 1;
-  border-color: #ffffff28;
-  /* border-color: #ffffff1a; */
-  /* border-color: #eff2f699; */
-  /* border-color: #ff4655; */
-}
-.backgroundAccent {
-  --tw-bg-opacity: 1;
-  background: #ffffff1a;
-}
-
-.textAccent {
-  color: #eff2f699;
+/* The vertical line on the left of the button */
+.filter-button-line {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 17px;
+  background-color: #6b7280;
+  /* Delayed transition on hover-off */
+  transition: height 0.15s ease 0.075s, background-color 0.15s ease 0.075s;
+  z-index: 5;
 }
 
-.heightmoment {
-  min-height: 30vh;
+/* Taller line for larger home page buttons */
+.filter-button-line-large {
+  height: 24px;
 }
 
-.navContainer {
-  display: flex;
-  justify-content: end;
-  align-items: center;
+/* The expanding background of the button */
+.filter-button-bg {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #ff4654;
+  /* Immediate transition on hover-off */
+  transition: width 0.15s ease 0s;
+  z-index: 1;
 }
 
-.anchor {
-  overflow-anchor: none;
+/* Overrides for hover-on animation sequence */
+.filter-button:hover .filter-button-line,
+.filter-button.filter-button-active .filter-button-line {
+  height: 100%;
+  background-color: #ff4654;
+  /* Line animation is immediate on hover/active */
+  transition-delay: 0s, 0s;
 }
 
-@media (min-width: 1600px) {
-  .mewhen {
-    height: fit-content;
-  }
+.filter-button:hover .filter-button-bg,
+.filter-button.filter-button-active .filter-button-bg {
+  width: calc(100% - 2px);
+  /* Background animation is delayed on hover/active */
+  transition-delay: 0.075s;
+}
+
+/* --- UI Components --- */
+.filter-divider {
+  width: 100%;
+  height: 2px;
+  background-color: hsl(var(--border));
+  margin: 0;
+}
+
+/* --- Utility Classes --- */
+/* Hides scrollbar for an element */
+.no-scrollbar {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE, Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

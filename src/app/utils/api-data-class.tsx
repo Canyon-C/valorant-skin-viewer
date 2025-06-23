@@ -1,7 +1,7 @@
-import { SkinCard } from "../ui/card-outlines/skinCard";
 import Image from "next/image";
-import Link from "next/link";
 import { ReactElement } from "react";
+
+// --- Type Definitions ---
 
 export type RawSkinData = {
   uuid: string;
@@ -29,6 +29,8 @@ export type RawSkinData = {
     assetPath: string;
   }>;
 };
+
+// --- Enums ---
 
 export enum WeaponType {
   Odin = "Odin",
@@ -153,6 +155,12 @@ export enum BundleType {
   Standard = "Standard",
 }
 
+// --- Data Processing Classes ---
+
+/**
+ * Processes raw skin data from the Valorant API into a more usable format.
+ * Extracts details like renders, videos, and attempts to parse bundle/weapon names.
+ */
 export class Skin {
   displayName: string;
   fullRender: string;
@@ -160,6 +168,7 @@ export class Skin {
   chromaRenders: string[];
   chromaVideos: (string | null)[];
   levelVideos: (string | null)[];
+  chromaSwatches: (string | null)[];
   bundle: BundleType;
   weapon: WeaponType;
 
@@ -177,12 +186,12 @@ export class Skin {
     this.levelVideos = data.levels.map((levels) => {
       return levels.streamedVideo;
     });
+    this.chromaSwatches = data.chromas.map((chroma) => {
+      return chroma.swatch;
+    });
 
     const names = this.displayName.split(/ (?!.* )/);
     this.bundle = BundleType[names[0] as keyof typeof BundleType];
-    if (this.bundle === undefined) {
-      this.bundle = BundleType["" as keyof typeof BundleType];
-    }
 
     this.weapon = WeaponType[names[1] as WeaponType];
     if (this.weapon === undefined) {
@@ -191,122 +200,92 @@ export class Skin {
   }
 }
 
+/**
+ * Manages a collection of skins, providing methods to filter and render them as React elements.
+ */
 export class RenderData {
   data: Skin[];
   elements: ReactElement[] = [];
   filteredData: Skin[] = [];
-  discardedSkins: Skin[] = [];
   constructor(data: Skin[]) {
     this.data = data;
   }
 
-  async renderSkinDetails() {
-    this.data.map((skin) => {
-      skin.chromaRenders.map((chroma) => {
-        this.elements.push(
-          <div key={skin.uuid}>
-            <Image
-              src={chroma}
-              width={512}
-              height={128}
-              loading="lazy"
-              alt={""}
-            ></Image>
-          </div>
-        );
-      });
-    });
-    return this.elements;
-  }
-
-  async renderSkins(filterProp: WeaponType[], searchQuery?: string | null) {
+  /**
+   * Filters skins based on weapon type and search query, then maps them to React elements for display.
+   * @param filterProp - Array of weapon types to filter by.
+   * @param searchQuery - String to search for in skin display names and bundle names.
+   * @param onSkinClick - Callback function to execute when a skin is clicked.
+   * @returns An array of React elements representing the filtered skins.
+   */
+  async renderSkins(
+    filterProp: WeaponType[],
+    searchQuery?: string | null,
+    onSkinClick?: (uuid: string) => void
+  ) {
     this.elements = [];
-    this.filteredData = [];
+    let skinsToRender = this.data;
 
-    if (searchQuery !== "" && searchQuery) {
-      searchQuery = searchQuery.toLowerCase();
-      if (searchQuery.includes("+")) {
-        searchQuery.replace("+", " ");
-      }
-      this.data.filter((skin) => {
-        if (skin.bundle === undefined) {
-          if (skin.weapon && searchQuery) {
-            if (skin.displayName.toLowerCase().includes(searchQuery)) {
-              this.filteredData.push(skin);
-            }
-          }
-        } else {
-          if (skin.weapon && searchQuery) {
-            if (
-              skin.displayName.toLowerCase().includes(searchQuery) ||
-              skin.bundle.toLowerCase().includes(searchQuery)
-            ) {
-              this.filteredData.push(skin);
-            }
-          }
-        }
-      });
+    // 1. Filter by search query if provided
+    if (searchQuery) {
+      const lowerCaseQuery = searchQuery.toLowerCase().replace(/\+/g, " ");
+      skinsToRender = skinsToRender.filter((skin) => {
+        const lowerCaseDisplayName = skin.displayName.toLowerCase();
+        const lowerCaseBundle = skin.bundle?.toLowerCase();
 
-      if (filterProp.length !== 0) {
-        this.filteredData = this.filteredData.filter((skin) =>
-          filterProp.some((filter) => filter == skin.weapon)
+        return (
+          lowerCaseDisplayName.includes(lowerCaseQuery) ||
+          (lowerCaseBundle && lowerCaseBundle.includes(lowerCaseQuery))
         );
-      }
-    } else {
-      this.data.filter((skin) => {
-        if (filterProp.length === 0) {
-          this.filteredData.push(skin);
-        } else {
-          for (var i = 0; i < filterProp.length; i++) {
-            if (skin.weapon === filterProp[i]) {
-              this.filteredData.push(skin);
-            }
-          }
-        }
       });
     }
-    this.filteredData.map((skin, i) => {
-      if (
-        skin.displayName.includes("Standard") ||
-        skin.displayName === "Random Favorite Skin"
-      ) {
-        return;
-      }
-      this.elements.push(
+
+    // 2. Filter by weapon type if any are selected
+    if (filterProp.length > 0) {
+      skinsToRender = skinsToRender.filter((skin) =>
+        filterProp.includes(skin.weapon)
+      );
+    }
+
+    this.filteredData = skinsToRender;
+
+    // 3. Filter out standard/random skins and map to React elements
+    this.elements = this.filteredData
+      .filter(
+        (skin) =>
+          !skin.displayName.includes("Standard") &&
+          skin.displayName !== "Random Favorite Skin"
+      )
+      .map((skin) => (
         <div
           key={skin.uuid}
-          className={`card w-fit h-full flex justify-center items-center`}
+          className="relative overflow-hidden bg-black cursor-pointer transition-all duration-200 hover:shadow-[0_0_0_2px_theme(colors.valRed)]"
+          onClick={() => onSkinClick?.(skin.uuid)}
         >
-          <Link
-            href={`./${skin.displayName
-              .replaceAll(" ", "")
-              .replaceAll("/", "")}?uuid=${skin.uuid}&level=${
-              skin.levelVideos.length - 1
-            }`}
-          >
-            <SkinCard>
-              <div className="flex flex-col w-full h-full justify-center items-center gap-10 flex-wrap ">
-                <header className="text-white text-center w-fit text-xl">
-                  {skin.displayName}
-                </header>
-                <Image
-                  className="object-contain w-4/5 h-3/5"
-                  src={`${skin.fullRender}`}
-                  alt={`${skin.displayName}`}
-                  width={512}
-                  height={128}
-                  loading="lazy"
-                />
-              </div>
-            </SkinCard>
-          </Link>
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center h-full p-2">
+            <Image
+              className="object-contain w-full h-32"
+              src={skin.fullRender}
+              alt={skin.displayName}
+              width={300}
+              height={100}
+              loading="lazy"
+            />
+            <p className="text-white text-center mt-1 text-sm font-medium truncate w-full">
+              {skin.displayName}
+            </p>
+          </div>
         </div>
-      );
-    });
+      ));
+
     return this.elements;
   }
 }
 
+/**
+ * Fetches all weapon skins from the Valorant API.
+ */
 export class ApiData {
   async getData() {
     const response = await fetch("https://valorant-api.com/v1/weapons/skins", {

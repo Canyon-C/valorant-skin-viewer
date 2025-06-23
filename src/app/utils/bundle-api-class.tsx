@@ -1,9 +1,6 @@
+// --- Type Definitions ---
 
-import { ReactElement } from "react";
-import Image from "next/image";
-import Link from "next/link";
-
-type Item = {
+export type BundleItem = {
   uuid: string;
   name: string;
   image: string;
@@ -19,7 +16,7 @@ type SkinBundle = {
   bundle_uuid: string;
   bundle_price: number;
   whole_sale_only: boolean;
-  items: Item[];
+  items: BundleItem[];
   seconds_remaining: number;
   expires_at: string;
 };
@@ -44,121 +41,19 @@ type ValApiBundle = {
   assetPath: string;
 };
 
-export class Bundle {
+export type Bundle = {
+  uuid: string;
   name: string;
   image: string;
   base_price?: number;
-  bundleItems?: Item[];
+  bundleItems?: BundleItem[];
+};
 
-  constructor(data: ValApiBundle, featuredBundle?: SkinBundle[]) {
-    this.name = data.displayName;
-    this.image = data.displayIcon;
-    if (featuredBundle) {
-      this.base_price = featuredBundle[0].bundle_price;
-      this.bundleItems = featuredBundle[0].items;
-    }
-  }
-}
+// --- API Fetching Function ---
 
-export class RenderAllBundles {
-  data: Bundle[];
-  bundleImages: ReactElement[] = [];
-  bundleNames: string[] = [];
-  featuredBundleItems: ReactElement[] = [];
-  featuredBundleDisplayImage: ReactElement[] = [];
-  bundleItemNames: ReactElement[] = [];
-  featuredBundleDisplayName: string = "";
-
-  constructor(bundleData: Bundle[]) {
-    this.data = bundleData;
-  }
-
-  renderBundles() {
-    this.data.map((bundle, index) => {
-      this.bundleImages.push(
-        <Image
-          key={index}
-          alt={bundle.name}
-          src={bundle.image}
-          width={500}
-          height={300}
-          className="h-full"
-        ></Image>
-      );
-    });
-    return this.bundleImages;
-  }
-
-  renderBundleNames() {
-    this.data.map((bundle, index) => {
-      this.bundleNames.push(bundle.name);
-    });
-    return this.bundleNames;
-  }
-
-  renderFeaturedBundleDisplayImage() {
-    this.data.map((bundle, index) => {
-      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
-        this.featuredBundleDisplayImage.push(
-          <Link
-            className=""
-            href={`./skin?query=${bundle.name.replace("//", "")}`}
-          >
-            <img
-              alt={bundle.name}
-              src={bundle.image}
-              className="object-fill"
-            ></img>
-            <p className="text-red-500 text-center pt-2">Bundle Price: {bundle.base_price} VP</p>
-          </Link>
-        );
-      }
-    });
-    return this.featuredBundleDisplayImage;
-  }
-
-  getFeaturedBundleDisplayName() {
-    this.data.map((bundle, index) => {
-      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
-        this.featuredBundleDisplayName = bundle.name;
-      }
-    });
-    return this.featuredBundleDisplayName;
-  }
-
-  renderFeaturedBundleItems() {
-    this.featuredBundleItems = [];
-
-    this.data.forEach((bundle) => {
-      if (bundle.bundleItems && bundle.bundleItems[0].image !== undefined) {
-        
-        bundle.bundleItems.forEach((bundleItem) => {
-          const itemImage = bundleItem.image ? <img
-          src={bundleItem.image}
-          className="w-full h-48 object-contain mb-2"
-        /> : null;          
-          this.featuredBundleItems.push(
-            <div
-              key={bundleItem.uuid}
-              className="flex flex-col items-center p-4 w-2/5 md:w-1/3 lg:w-1/5"
-            >
-              {itemImage ? itemImage : <p className="text-white w-full h-48 mb-2 flex justify-center items-center">Image not available</p>}
-              <p className="text-red-500 text-center">{bundleItem.base_price} VP</p>
-              
-              <p className="text-white text-center">{bundleItem.name}</p>
-            </div>
-          );
-        });
-      }
-    });
-
-    return this.featuredBundleItems;
-  }
-}
-
-export class FetchData {
-  renderInstance: RenderAllBundles = {} as RenderAllBundles;
-  async getData() {
+export async function getFeaturedBundle(): Promise<Bundle | null> {
+  try {
+    // Fetch featured store data from HenrikDev API
     const response = await fetch(
       "https://api.henrikdev.xyz/valorant/v2/store-featured",
       {
@@ -166,18 +61,47 @@ export class FetchData {
         headers: {
           Authorization: process.env.API_KEY as string,
         },
+        cache: "no-store",
       }
     );
+
+    if (!response.ok) {
+      console.error(`henrikdev API error! status: ${response.status}`);
+      return null;
+    }
+
     const rawData: ApiResponse = await response.json();
-    const bundleData: SkinBundle[] = rawData.data;
-    const val_api_response = await fetch(`https://valorant-api.com/v1/bundles`);
-    const valRawData = await val_api_response.json();
-    const valBundleData: ValApiBundle[] = valRawData.data;
-    this.renderInstance = new RenderAllBundles(
-      valBundleData.map((bundle) => {
-        const isFeatured = bundle.uuid === bundleData[0].bundle_uuid;
-        return new Bundle(bundle, isFeatured ? bundleData : undefined);
-      })
+    if (rawData.status !== 200 || !rawData.data || rawData.data.length === 0) {
+      console.error("No featured bundle data from henrikdev API");
+      return null;
+    }
+    const featuredStoreData: SkinBundle = rawData.data[0];
+
+    // Fetch bundle details from Valorant-API using the bundle UUID
+    const val_api_response = await fetch(
+      `https://valorant-api.com/v1/bundles/${featuredStoreData.bundle_uuid}`
     );
+
+    if (!val_api_response.ok) {
+      console.error(
+        `valorant-api error! status: ${val_api_response.status}`
+      );
+      return null;
+    }
+
+    const valRawData = await val_api_response.json();
+    const valBundleData: ValApiBundle = valRawData.data;
+
+    // Combine data from both APIs and return
+    return {
+      uuid: valBundleData.uuid,
+      name: valBundleData.displayName,
+      image: valBundleData.displayIcon,
+      base_price: featuredStoreData.bundle_price,
+      bundleItems: featuredStoreData.items,
+    };
+  } catch (error) {
+    console.error("Failed to fetch featured bundle:", error);
+    return null;
   }
 }
