@@ -9,7 +9,7 @@ export const runtime = "edge";
 const NoBundleAvailable = () => (
   <main className="m-0 p-0 bg-black h-screen flex flex-col justify-center items-center overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
     <div className="text-white">
-      Featured bundle will be available soon. A fix is in the works ✅. Sorry for the inconvenience.
+      Error fetching featured bundle. Make a github issue if this persists.
     </div>
   </main>
 );
