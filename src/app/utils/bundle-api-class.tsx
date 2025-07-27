@@ -53,20 +53,39 @@ export type Bundle = {
 
 export async function getFeaturedBundle(): Promise<Bundle | null> {
   try {
+    console.log("Attempting to fetch featured bundle from HenrikDev API.");
+    const apiKey = process.env.API_KEY;
+
+    if (!apiKey) {
+      console.error("API_KEY environment variable is not set.");
+      return null;
+    }
+    console.log("API_KEY is present.");
+
+    const url = "https://api.henrikdev.xyz/valorant/v2/store-featured";
+    const headers = {
+      Authorization: apiKey,
+    };
+
+    console.log(`Fetching from URL: ${url}`);
+    // console.log("With headers:", JSON.stringify(headers));
+
     // Fetch featured store data from HenrikDev API
-    const response = await fetch(
-      "https://api.henrikdev.xyz/valorant/v2/store-featured",
-      {
-        method: "GET",
-        headers: {
-          Authorization: process.env.API_KEY as string,
-        },
-        cache: "no-store",
-      }
-    );
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       console.error(`henrikdev API error! status: ${response.status}`);
+      console.error(`Status Text: ${response.statusText}`);
+      try {
+        const errorBody = await response.text();
+        console.error("Error Body:", errorBody);
+      } catch (e) {
+        console.error("Could not read error body:", e);
+      }
       return null;
     }
 
@@ -76,6 +95,7 @@ export async function getFeaturedBundle(): Promise<Bundle | null> {
       return null;
     }
     const featuredStoreData: SkinBundle = rawData.data[0];
+    console.log("Featured store data fetched successfully:", featuredStoreData);
 
     // Fetch bundle details from Valorant-API using the bundle UUID
     const val_api_response = await fetch(
@@ -102,6 +122,11 @@ export async function getFeaturedBundle(): Promise<Bundle | null> {
     };
   } catch (error) {
     console.error("Failed to fetch featured bundle:", error);
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
     return null;
   }
 }
