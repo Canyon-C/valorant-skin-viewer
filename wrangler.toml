@@ -1,4 +1,0 @@
-name = "valorant-skin-viewer"
-compatibility_date = "2025-07-26"
-compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
