@@ -55,13 +55,13 @@ export async function getFeaturedBundle(): Promise<Bundle | null> {
   try {
     // Fetch featured store data from HenrikDev API
     const response = await fetch(
-      "https://api.henrikdev.xyz/valorant/v2/store-featured",
+      "https://api.henrikdev.xyz/valorant/v2/store-featured", 
       {
         method: "GET",
         headers: {
           Authorization: process.env.API_KEY as string,
         },
-        next: { revalidate: 60 },
+        next: { revalidate: 300 },
       },
     )
 
