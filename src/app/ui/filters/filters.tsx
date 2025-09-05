@@ -1,8 +1,8 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { WeaponType } from "@/app/utils/api-data-class";
-import { motion } from "framer-motion";
+"use client"
+import React, { useState, useEffect } from "react"
+import { useSearchParams, usePathname, useRouter } from "next/navigation"
+import { WeaponType } from "@/app/utils/api-data-class"
+import { motion } from "framer-motion"
 
 // --- Constants and Types ---
 
@@ -26,9 +26,11 @@ const orderedWeaponTypes: WeaponType[] = [
   WeaponType.Odin,
   WeaponType.Bucky,
   WeaponType.Judge,
-];
+]
 
-const filtersList = orderedWeaponTypes.map((weaponType) => ({ filterName: weaponType }));
+const filtersList = orderedWeaponTypes.map((weaponType) => ({
+  filterName: weaponType,
+}))
 
 const itemsWithSpaceAfter: WeaponType[] = [
   WeaponType.Melee,
@@ -37,22 +39,27 @@ const itemsWithSpaceAfter: WeaponType[] = [
   WeaponType.Sheriff,
   WeaponType.Operator,
   WeaponType.Odin,
-];
+]
 
 interface FiltersProps {
-  alwaysOpen?: boolean;
+  alwaysOpen?: boolean
 }
 
 interface FilterButtonProps {
-  onClick: () => void;
-  isActive: boolean;
-  children: React.ReactNode;
-  alwaysOpen: boolean;
+  onClick: () => void
+  isActive: boolean
+  children: React.ReactNode
+  alwaysOpen: boolean
 }
 
 // --- Reusable Filter Components ---
 
-const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonProps) => {
+const FilterButton = ({
+  onClick,
+  isActive,
+  children,
+  alwaysOpen,
+}: FilterButtonProps) => {
   return (
     <div
       onClick={onClick}
@@ -60,14 +67,18 @@ const FilterButton = ({ onClick, isActive, children, alwaysOpen }: FilterButtonP
         alwaysOpen
           ? `w-full pr-3 py-1 text-left text-sm font-medium`
           : `justify-center text-sm px-2 h-10 rounded-full flex items-center`
-      } ${isActive ? 'filter-button-active' : ''}`}
+      } ${isActive ? "filter-button-active" : ""}`}
     >
       <div className="filter-button-line"></div>
       <div className="filter-button-bg"></div>
-      <p className={`text-left text-sm font-medium relative z-10 ${alwaysOpen ? 'pl-6' : ''}`}>{children}</p>
+      <p
+        className={`text-left text-sm font-medium relative z-10 ${alwaysOpen ? "pl-6" : ""}`}
+      >
+        {children}
+      </p>
     </div>
-  );
-};
+  )
+}
 
 const Divider = () => (
   <>
@@ -75,79 +86,89 @@ const Divider = () => (
     <div className="filter-divider"></div>
     <div className="h-0.5"></div>
   </>
-);
+)
 
 const ViewToggleButtons = ({
   currentView,
   onToggle,
 }: {
-  currentView: string;
-  onToggle: (view: "skins" | "bundles") => void;
+  currentView: string
+  onToggle: (view: "skins" | "bundles") => void
 }) => (
-  <div className={`flex flex-col gap-1 ${currentView === "skins" ? "mb-3" : ""}`}>
-    <FilterButton onClick={() => onToggle("skins")} isActive={currentView === "skins"} alwaysOpen={true}>
+  <div
+    className={`flex flex-col gap-1 ${currentView === "skins" ? "mb-3" : ""}`}
+  >
+    <FilterButton
+      onClick={() => onToggle("skins")}
+      isActive={currentView === "skins"}
+      alwaysOpen={true}
+    >
       Skins
     </FilterButton>
-    <FilterButton onClick={() => onToggle("bundles")} isActive={currentView === "bundles"} alwaysOpen={true}>
+    <FilterButton
+      onClick={() => onToggle("bundles")}
+      isActive={currentView === "bundles"}
+      alwaysOpen={true}
+    >
       Bundles
     </FilterButton>
   </div>
-);
+)
 
 // --- Main Filters Component ---
 
 export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
-  const [filterClicked, setFilteredClicked] = useState<boolean>(false);
+  const [filterClicked, setFilteredClicked] = useState<boolean>(false)
 
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setFilteredClicked(false);
+        setFilteredClicked(false)
       }
-    };
+    }
 
     if (filterClicked) {
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown)
     }
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [filterClicked]);
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [filterClicked])
 
-  const params = new URLSearchParams(searchParams);
-  const currentView = params.get("view") || "skins";
-  const activeFilters = params.getAll("filter");
+  const params = new URLSearchParams(searchParams)
+  const currentView = params.get("view") || "skins"
+  const activeFilters = params.getAll("filter")
 
   const clickHandle = (filter: WeaponType) => {
-    const newParams = new URLSearchParams(searchParams);
-    const allFilters = newParams.getAll("filter");
+    const newParams = new URLSearchParams(searchParams)
+    const allFilters = newParams.getAll("filter")
 
     if (allFilters.includes(filter)) {
-      const newFilters = allFilters.filter((f) => f !== filter);
-      newParams.delete("filter");
-      newFilters.forEach((f) => newParams.append("filter", f));
+      const newFilters = allFilters.filter((f) => f !== filter)
+      newParams.delete("filter")
+      newFilters.forEach((f) => newParams.append("filter", f))
     } else {
-      newParams.append("filter", filter);
+      newParams.append("filter", filter)
     }
-    replace(`${pathname}?${newParams.toString()}`, { scroll: false });
-  };
+    replace(`${pathname}?${newParams.toString()}`, { scroll: false })
+  }
 
   const handleViewToggle = (view: "skins" | "bundles") => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("view", view);
-    newParams.delete("filter");
-    replace(`${pathname}?${newParams.toString()}`, { scroll: false });
-  };
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set("view", view)
+    newParams.delete("filter")
+    replace(`${pathname}?${newParams.toString()}`, { scroll: false })
+  }
 
   const dropdownVariants = {
     initial: { height: 0, overflow: "hidden" },
     active: { height: "auto", overflow: "hidden" },
-  };
+  }
 
   return (
     <motion.div
@@ -180,37 +201,45 @@ export const Filters = ({ alwaysOpen = false }: FiltersProps) => {
         animate={alwaysOpen ? "active" : filterClicked ? "active" : "initial"}
         className={`w-full ${alwaysOpen ? "" : "filter-dropdown"}`}
       >
-        {alwaysOpen && <ViewToggleButtons currentView={currentView} onToggle={handleViewToggle} />}
+        {alwaysOpen && (
+          <ViewToggleButtons
+            currentView={currentView}
+            onToggle={handleViewToggle}
+          />
+        )}
 
-        <div className={`flex ${alwaysOpen ? "flex-col gap-1" : "flex-wrap h-fit py-5 px-5 justify-center items-center gap-2"}`}>
+        <div
+          className={`flex ${alwaysOpen ? "flex-col gap-1" : "flex-wrap h-fit py-5 px-5 justify-center items-center gap-2"}`}
+        >
           {alwaysOpen && currentView === "skins" && (
             <>
               <div className="filter-divider"></div>
               <div className="h-0.5"></div>
             </>
           )}
-          
-          {currentView === "skins" && filtersList.map((filter, index) => {
-            const weaponName = filter.filterName as WeaponType;
-            const isLastItem = index === filtersList.length - 1;
-            const hasSpaceAfter = itemsWithSpaceAfter.includes(weaponName);
 
-            return (
-              <React.Fragment key={filter.filterName}>
-                <FilterButton
-                  onClick={() => clickHandle(filter.filterName)}
-                  isActive={activeFilters.includes(filter.filterName)}
-                  alwaysOpen={alwaysOpen}
-                >
-                  {filter.filterName}
-                </FilterButton>
+          {currentView === "skins" &&
+            filtersList.map((filter, index) => {
+              const weaponName = filter.filterName as WeaponType
+              const isLastItem = index === filtersList.length - 1
+              const hasSpaceAfter = itemsWithSpaceAfter.includes(weaponName)
 
-                {alwaysOpen && !isLastItem && hasSpaceAfter && <Divider />}
-              </React.Fragment>
-            );
-          })}
+              return (
+                <React.Fragment key={filter.filterName}>
+                  <FilterButton
+                    onClick={() => clickHandle(filter.filterName)}
+                    isActive={activeFilters.includes(filter.filterName)}
+                    alwaysOpen={alwaysOpen}
+                  >
+                    {filter.filterName}
+                  </FilterButton>
+
+                  {alwaysOpen && !isLastItem && hasSpaceAfter && <Divider />}
+                </React.Fragment>
+              )
+            })}
         </div>
       </motion.div>
     </motion.div>
-  );
-};
+  )
+}
